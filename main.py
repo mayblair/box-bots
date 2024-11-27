@@ -129,7 +129,7 @@ def start():
 # READ IN VARIABLES FROM LOCAL DIRECTORIES
 def set_up_vars():
     # Get the list of all files and directories
-    path = "/Users/mcblair/thesis/images/"
+    path = "/Users/mcblair/thesis/box-bots/images/"
     # make sure is png or jpg
     step_list = os.listdir(path + 'steps/')
     steps = sorted(['images/steps/' + s for s in step_list if "png" in s])
