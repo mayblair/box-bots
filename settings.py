@@ -67,4 +67,3 @@ class Var():
         self.transparent_grey = (165, 165, 165, 100)
 
 var = Var()
-clock = pygame.time.Clock()

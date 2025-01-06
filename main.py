@@ -3,7 +3,7 @@ import pygame
 import pygame_widgets
 import os
 import sys
-from settings import var, clock
+from settings import var
 from logic import init_operations, init_toolbar, init_steps, \
     init_undo_redo, init_bar_buttons, final_toolbar, reset_tool, \
     draw_screen, draw_canvas, draw_new_tool, init_rotate, draw_rotate, \
@@ -153,9 +153,16 @@ def set_up_vars():
 
 if __name__ == '__main__':
     # MAIN PROGRAM VARIABLES
-    var.project = sys.argv[1:][0]
-    running = True
-    slider = False
-    # START GAME
-    print('\nstarting interface...\n')
-    start()
+    project_name = sys.argv[1:]
+    if project_name:
+        var.project = project_name[0]
+        running = True
+        slider = False
+        # START GAME
+        clock = pygame.time.Clock()
+        print('\nstarting interface...\n')
+        start()
+    else:
+        print("\nEnter a project name (i.e., 'car')\n")
+        running = False
+        pygame.quit()
