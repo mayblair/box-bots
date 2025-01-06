@@ -7,7 +7,7 @@ from logic import init_operations, init_toolbar, init_steps, \
     init_undo_redo, init_bar_buttons, final_toolbar, reset_tool, \
     draw_screen, draw_canvas, draw_new_tool, init_rotate, draw_rotate, \
     draw_variables, remove_new_circle, check_op, init_slider, draw_slider, \
-    draw_shadow, draw_shadow_tool
+    draw_shadow, draw_shadow_tool, init_reorder, draw_reorder
 
 
 # GAME LOGIC
@@ -45,9 +45,12 @@ def process_events(events):
                         remove_new_circle()
                         return True
             # click on operations
-            elif (1080 > x > 350 and var.height > y > 690):
+            elif (var.width - 20 > x > 350 and var.height > y > 690):
                 toolbar[var.tool_screen].update(events)
-                # check each op for a change
+                var.rotate.update(events)
+                var.reorder.update(events)
+                var._undo_redo.update(events)
+                # check add and remove ops for a change
                 for op in var._operations:
                     updated = op.update(events)
                     if updated:
@@ -80,10 +83,6 @@ def process_events(events):
                         else:
                             var.final = False
                         break
-            # click on undo/redo, rotate, or sliders
-            elif (var.width > x > 1080 and var.height > y > 645):
-                var.rotate.update(events)
-                var._undo_redo.update(events)
             else:
                 print("unknown update at " + str(x) + " " + str(y))
     draw_screen()
@@ -101,6 +100,7 @@ def start():
     init_bar_buttons()
     init_slider()
     init_rotate()
+    init_reorder()
     draw_screen()
     draw_variables()
     pygame.display.flip()
@@ -121,6 +121,7 @@ def start():
             var.slider.hide()
             var.text_box.hide()
             draw_rotate()
+            draw_reorder()
             draw_shadow_tool((x,y), var.tool, var.screen)
         pygame.display.flip()
     pygame.quit()

@@ -24,6 +24,9 @@ class Var():
         self.slider = None
         self.text_box = None
         self.rotate = None
+        self.rotate_label = None
+        self.reorder = None
+        self.reorder_label = None
 
         self._operations = pygame.sprite.Group()
         self.op = None

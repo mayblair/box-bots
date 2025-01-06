@@ -325,7 +325,7 @@ class BarButton(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
         
 
-""" Class for an rotate button to rotaate a tool 90 degrees clockwise """
+""" Class for an rotate button to rotate a tool 90 degrees clockwise """
 class Rotate(pygame.sprite.Sprite):
     def __init__(self, image, state = "unselected"):
         # Call the parent class (Sprite) constructor
@@ -355,6 +355,48 @@ class Rotate(pygame.sprite.Sprite):
                 var.tool.rotation = 0
         # self._state = "selected"
         # self.draw()
+    
+
+    def draw(self, screen = var.screen):
+        pygame.draw.circle(var.screen, var.more_grey, \
+                           (var.width - 980, var.height - 130), 50)
+        self.rect.center = var.width - 980, var.height - 130
+        screen.blit(self.image, self.rect)
+
+
+""" Class for an reorder button to move the most recently drawn
+ tool from the top layer to the bottom layer """
+class Reorder(pygame.sprite.Sprite):
+    def __init__(self, image, state = "unselected"):
+        # Call the parent class (Sprite) constructor
+        super().__init__()
+
+        self._size = 60
+        self._image = image
+        self._state = state
+        # Pass in the image, and resize it
+        image_load = pygame.image.load(image).convert_alpha()
+        self.image = pygame.transform.smoothscale(image_load, \
+            (self._size, self._size))
+        # Re-position the image
+        self.rect = self.image.get_rect()
+
+    def update(self, events):
+        if events:
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.rect.collidepoint(event.pos):
+                        self.on_click()
+
+    def on_click(self):
+        current_canv = var.canvas[var.step.num]
+        if current_canv:
+            print(current_canv)
+            recent = current_canv[-1]
+            print(recent)
+            copy_canv = [recent] + current_canv[:len(current_canv) - 1]
+            print(copy_canv)
+            var.canvas[var.step.num] = copy_canv
     
 
     def draw(self, screen = var.screen):

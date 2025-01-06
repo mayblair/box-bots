@@ -4,7 +4,8 @@ import pygame_widgets
 from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
 from settings import var
-from classes import Step, Operation, Tool, UndoRedo, BarButton, Rotate
+from classes import Step, Operation, Tool, UndoRedo, BarButton, \
+    Rotate, Reorder
 
 undo_label = None
 redo_label = None
@@ -152,9 +153,17 @@ def init_slider():
 """ Displays rotation button and label on the bottom left of screen """
 def init_rotate():
     var.rotate = Rotate('images/rotate.png')
-    var.rotate_label = TextBox(var.screen, var.width - 296, var.height - 80, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
+    var.rotate_label = TextBox(var.screen, var.width - 1020, var.height - 80, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
     var.rotate_label.setText("Rotate")
     var.rotate_label.disable()
+
+
+""" Displays reorder button and label on the bottom right of screen """
+def init_reorder():
+    var.reorder = Reorder('images/reorder.png')
+    var.reorder_label = TextBox(var.screen, var.width - 296, var.height - 80, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
+    var.reorder_label.setText("Reorder")
+    var.reorder_label.disable()
 
 
 """ Adds appropriate up/down bar buttons to display depending on the
@@ -249,6 +258,13 @@ def draw_rotate():
     var.rotate.draw()
     var.rotate_label.setText("Rotate")
     var.rotate_label.draw()
+
+
+""" Draw reorder button on the bottom right of screen """
+def draw_reorder():
+    var.reorder.draw()
+    var.reorder_label.setText("Reorder")
+    var.reorder_label.draw()
 
 
 """ Draw screen, including background and buttons """
