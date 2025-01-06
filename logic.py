@@ -1,6 +1,5 @@
 # LOGIC for main program
 import pygame as pygame
-import pygame_widgets
 from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
 from settings import var
@@ -19,9 +18,11 @@ def init_toolbar(tools, sizes):
     var.tool_screen = 0
     for count, image in enumerate(tools):
         if "rubber" in image:
-            my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], alt_img='images/tools/rubber_alt.png')
+            my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
+                            alt_img='images/' + var.project + '/tools/rubber_alt.png')
         elif "bottlecap" in image:
-            my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], rev_img='images/tools/bottlecaprev.png')
+            my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
+                           rev_img='images/' + var.project + '/tools/bottlecaprev.png')
         else:
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count])
         if count == 0:
@@ -60,7 +61,7 @@ def final_toolbar():
         sub = screen.subsurface(rect).convert_alpha()
         r_image = pygame.transform.rotate(sub, 10).convert_alpha()
         _image = pygame.transform.smoothscale(r_image, (dimensions[0], dimensions[1] * 0.7)).convert_alpha()       
-        img_name = "images/tools/steps/step" + str(step.num) + ".png"
+        img_name = 'images/' + var.project + '/tools/steps/step' + str(step.num) + '.png'
         pygame.image.save(_image, img_name)
         my_tool = Tool(img_name, (location[0], location[1] + 200*(index%4)), 1000, 1000)
         my_tool._state = "unselected"
@@ -124,10 +125,12 @@ def init_undo_redo():
     undo = UndoRedo('images/undo.png', "undo")
     var._undo_redo.add(redo)
     var._undo_redo.add(undo)
-    undo_label = TextBox(var.screen, var.width-185, var.height-40, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
+    undo_label = TextBox(var.screen, var.width-185, var.height-40, 55, 25, \
+                        fontSize=15, borderThickness=0, colour=var.light_grey)
     undo_label.setText("Undo")
     undo_label.disable()
-    redo_label = TextBox(var.screen, var.width-110, var.height-40, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
+    redo_label = TextBox(var.screen, var.width-110, var.height-40, 55, 25, \
+                        fontSize=15, borderThickness=0, colour=var.light_grey)
     redo_label.setText("Redo")
     redo_label.disable()
 
@@ -153,7 +156,8 @@ def init_slider():
 """ Displays rotation button and label on the bottom left of screen """
 def init_rotate():
     var.rotate = Rotate('images/rotate.png')
-    var.rotate_label = TextBox(var.screen, var.width - 1020, var.height - 80, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
+    var.rotate_label = TextBox(var.screen, var.width - 1010, var.height - 80, 55, 25, \
+                               fontSize=15, borderThickness=0, colour=var.light_grey)
     var.rotate_label.setText("Rotate")
     var.rotate_label.disable()
 
@@ -161,7 +165,8 @@ def init_rotate():
 """ Displays reorder button and label on the bottom right of screen """
 def init_reorder():
     var.reorder = Reorder('images/reorder.png')
-    var.reorder_label = TextBox(var.screen, var.width - 296, var.height - 80, 55, 25, fontSize=15, borderThickness=0, colour=var.light_grey)
+    var.reorder_label = TextBox(var.screen, var.width - 300, var.height - 80, 55, 25, \
+                                fontSize=15, borderThickness=0, colour=var.light_grey)
     var.reorder_label.setText("Reorder")
     var.reorder_label.disable()
 

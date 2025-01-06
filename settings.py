@@ -15,6 +15,8 @@ class Var():
         self.setup = True
         self.time = 0
 
+        self.project = ""
+
         self.screen = pygame.display.set_mode(self.dimensions)
 
         # VARIABLE GROUPS SETUP

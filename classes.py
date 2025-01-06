@@ -139,7 +139,6 @@ class Tool(pygame.sprite.Sprite):
         else:
             print("no operation selected")
 
-
     def draw(self, screen = var.screen):
         # Determine if step is open and to be highlighted or closed and to be
         # small and shadowed.
@@ -161,7 +160,7 @@ class Tool(pygame.sprite.Sprite):
 
 """ Class for an operation image that can be open or closed 
     in the workspace. Displayed on the bottom of the workspace.
-    Once selected, the operation (add and remove) can 
+    Once selected, the operation (add or remove) can 
     be used on the canvas with a click and drag gesture. Only one 
     operation in the group can be selected at any time."""
 class Operation(pygame.sprite.Sprite):
@@ -353,10 +352,7 @@ class Rotate(pygame.sprite.Sprite):
             var.tool.rotation += 1
             if var.tool.rotation == 4:
                 var.tool.rotation = 0
-        # self._state = "selected"
-        # self.draw()
     
-
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
                            (var.width - 980, var.height - 130), 50)
@@ -401,6 +397,6 @@ class Reorder(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 270, var.height - 130), 45)
+                           (var.width - 270, var.height - 130), 50)
         self.rect.center = var.width - 270, var.height - 130
         screen.blit(self.image, self.rect)

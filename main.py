@@ -2,6 +2,7 @@
 import pygame
 import pygame_widgets
 import os
+import sys
 from settings import var, clock
 from logic import init_operations, init_toolbar, init_steps, \
     init_undo_redo, init_bar_buttons, final_toolbar, reset_tool, \
@@ -132,14 +133,17 @@ def set_up_vars():
     # Get the list of all files and directories
     path = "/Users/mcblair/thesis/box-bots/images/"
     # make sure is png or jpg
-    step_list = os.listdir(path + 'steps/')
-    steps = sorted(['images/steps/' + s for s in step_list if "png" in s])
+    step_list = os.listdir(path + var.project + '/steps/')
+    steps = sorted(['images/' + var.project + '/steps/' + s for s in step_list \
+                    if "png" in s])
     init_steps(steps)
 
     # bottlecap, cardboard, rubber, skewer, straw, tape
     sizes = [170, 350, 185, 370, 380, 110]
-    tool_list = os.listdir(path + 'tools/')
-    tools = sorted(['images/tools/' + t for t in tool_list if ("alt" not in t and "rev" not in t) and ("png" in t or "jpg" in t)])
+    tool_list = os.listdir(path + var.project + '/tools/')
+    tools = sorted(['images/' + var.project + '/tools/' + t for t in tool_list \
+                    if ("alt" not in t and "rev" not in t) and \
+                        ("png" in t or "jpg" in t)])
     init_toolbar(tools, sizes)
 
     op_list = os.listdir(path + 'operations/')
@@ -147,11 +151,11 @@ def set_up_vars():
     ops = ['images/operations/' + o for o in op_list if "png" in o]
     init_operations(ops, op_names)
 
-
-# MAIN PROGRAM VARIABLES
-# events = None
-running = True
-slider = False
-# START GAME
-print('\nstarting interface...\n')
-start()
+if __name__ == '__main__':
+    # MAIN PROGRAM VARIABLES
+    var.project = sys.argv[1:][0]
+    running = True
+    slider = False
+    # START GAME
+    print('\nstarting interface...\n')
+    start()
