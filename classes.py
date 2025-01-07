@@ -75,7 +75,7 @@ class Step(pygame.sprite.Sprite):
     be added to the canvas with a click and drag gesture. Only one 
     tool in the group can be selected at any time. """
 class Tool(pygame.sprite.Sprite):
-    def __init__(self, image, point, toolsizex, toolsizey, state = "unselected", alt_img = None, rev_img = None):
+    def __init__(self, image, point, toolsizex, toolsizey, state = "unselected", shapes = [], rev_img = None):
         # Call the parent class (Sprite) constructor
         super().__init__()
     
@@ -86,8 +86,19 @@ class Tool(pygame.sprite.Sprite):
         self._y = point[1]
         self._state = state
         self.rotation = 0
+
         # Pass in the image, and resize it
         self.image_load = pygame.image.load(image).convert_alpha()
+        # add the primary image as first in the shapes list
+        self.shapes = [self.image_load]
+        self.num_shape = 0
+        self.len_shapes = 0
+        
+        if shapes != []:
+            self.len_shapes = len(shapes)
+            for img in shapes:
+                img_load = pygame.image.load(img).convert_alpha()
+                self.shapes.append(img_load)
 
         # for reverse of images (rotation == 2)
         self.rev_img_load = rev_img
@@ -96,17 +107,14 @@ class Tool(pygame.sprite.Sprite):
 
         if var.final:
             self.toolsizey = toolsizey * 0.7
+            self.toolsizex = toolsizex * 0.9
             
         self.image = pygame.transform.smoothscale(self.image_load, \
                 (self._size, self._size)).convert_alpha()
+        
         # Re-position the image
         self.rect = self.image.get_rect()
         self.rect.center = self._x, self._y
-
-        # for alternate images only (rubber band)
-        self.alt_image_load = alt_img
-        if alt_img:
-            self.alt_image_load = pygame.image.load(alt_img).convert_alpha()
 
     def update(self, events):
         if events:
@@ -350,7 +358,7 @@ class Rotate(pygame.sprite.Sprite):
     def on_click(self):
         if var.tool:
             var.tool.rotation += 1
-            if var.tool.rotation == 4:
+            if var.tool.rotation == 8:
                 var.tool.rotation = 0
     
     def draw(self, screen = var.screen):
@@ -387,16 +395,60 @@ class Reorder(pygame.sprite.Sprite):
     def on_click(self):
         current_canv = var.canvas[var.step.num]
         if current_canv:
-            print(current_canv)
             recent = current_canv[-1]
-            print(recent)
             copy_canv = [recent] + current_canv[:len(current_canv) - 1]
-            print(copy_canv)
             var.canvas[var.step.num] = copy_canv
+
+        # if current_canv:
+        #     copy_canv = current_canv
+        #     recent = copy_canv[-1]
+        #     while recent[0] == "remove":
+        #         copy_canv = [recent] + copy_canv[:len(current_canv) - 1]
+        #         recent = copy_canv[-1]
+        #         # print(copy_canv)
+        #     copy_canv = [recent] + copy_canv[:len(current_canv) - 1]
+        #     var.canvas[var.step.num] = copy_canv
     
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 270, var.height - 130), 50)
-        self.rect.center = var.width - 270, var.height - 130
+                           (var.width - 325, var.height - 130), 50)
+        self.rect.center = var.width - 325, var.height - 130
+        screen.blit(self.image, self.rect)
+        
+
+""" Class for an fold button to cycle through the folded shapes
+ of each tool """
+class Fold(pygame.sprite.Sprite):
+    def __init__(self, image, state = "unselected"):
+        # Call the parent class (Sprite) constructor
+        super().__init__()
+
+        self._size = 50
+        self._image = image
+        self._state = state
+        # Pass in the image, and resize it
+        image_load = pygame.image.load(image).convert_alpha()
+        self.image = pygame.transform.smoothscale(image_load, \
+            (self._size, self._size))
+        # Re-position the image
+        self.rect = self.image.get_rect()
+
+    def update(self, events):
+        if events:
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.rect.collidepoint(event.pos):
+                        self.on_click()
+
+    def on_click(self):
+        if var.tool.num_shape == var.tool.len_shapes:
+            var.tool.num_shape = 0
+        else:
+            var.tool.num_shape += 1
+
+    def draw(self, screen = var.screen):
+        pygame.draw.circle(var.screen, var.more_grey, \
+                           (var.width - 850, var.height - 130), 50)
+        self.rect.center = var.width - 850, var.height - 130
         screen.blit(self.image, self.rect)

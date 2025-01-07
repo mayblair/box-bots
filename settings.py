@@ -29,6 +29,8 @@ class Var():
         self.rotate_label = None
         self.reorder = None
         self.reorder_label = None
+        self.fold = None
+        self.fold_label = None
 
         self._operations = pygame.sprite.Group()
         self.op = None
@@ -47,7 +49,7 @@ class Var():
 
         # canvas tracks any addition/subtraction of materials
         # redo tracks the "undo" of any materials removed from canvas
-        # both have key: step num and value: (material, x, y, size/rotation)
+        # both have key: step num and value: (material, x, y, size/rotation, shape)
         # material can be either a tool or a "remove" circle to erase
         self.canvas = {}
         self.redo = {}

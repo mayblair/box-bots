@@ -4,7 +4,7 @@ from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
 from settings import var
 from classes import Step, Operation, Tool, UndoRedo, BarButton, \
-    Rotate, Reorder
+    Rotate, Reorder, Fold
 
 undo_label = None
 redo_label = None
@@ -18,11 +18,20 @@ def init_toolbar(tools, sizes):
     var.tool_screen = 0
     for count, image in enumerate(tools):
         if "rubber" in image:
+            shapes = []
+            for index in range(1, 4):
+                shapes.append('images/' + var.project + '/tools/rubber_alt' + str(index) + '.png')
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
-                            alt_img='images/' + var.project + '/tools/rubber_alt.png')
+                            shapes = shapes)
         elif "bottlecap" in image:
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
-                           rev_img='images/' + var.project + '/tools/bottlecaprev.png')
+                           rev_img = 'images/' + var.project + '/tools/bottlecaprev.png')
+        elif "cardboard" in image:
+            shapes = []
+            for index in range(1, 5):
+                shapes.append('images/' + var.project + '/tools/cardboard_alt' + str(index) + '.png')
+            my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
+                           shapes = shapes)
         else:
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count])
         if count == 0:
@@ -59,7 +68,7 @@ def final_toolbar():
         dimensions = (var.width-590, var.height)
         rect = pygame.Rect(400, 0, dimensions[0], dimensions[1])
         sub = screen.subsurface(rect).convert_alpha()
-        r_image = pygame.transform.rotate(sub, 10).convert_alpha()
+        r_image = pygame.transform.rotate(sub, 10)
         _image = pygame.transform.smoothscale(r_image, (dimensions[0], dimensions[1] * 0.7)).convert_alpha()       
         img_name = 'images/' + var.project + '/tools/steps/step' + str(step.num) + '.png'
         pygame.image.save(_image, img_name)
@@ -107,7 +116,7 @@ def init_operations(operations, names):
     # Begin operation list on bottom of workspace
     location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 100)
     for count, image in enumerate(operations):
-        this_op = Operation(image, (location[0] + 150*count, location[1]), names[count])
+        this_op = Operation(image, (location[0] + 125*count, location[1]), names[count])
         if count == 0:
             this_op._state = "selected"
             var.op = this_op
@@ -165,10 +174,19 @@ def init_rotate():
 """ Displays reorder button and label on the bottom right of screen """
 def init_reorder():
     var.reorder = Reorder('images/reorder.png')
-    var.reorder_label = TextBox(var.screen, var.width - 300, var.height - 80, 55, 25, \
+    var.reorder_label = TextBox(var.screen, var.width - 355, var.height - 80, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.reorder_label.setText("Reorder")
     var.reorder_label.disable()
+
+
+""" Displays fold button and label on the bottom left of screen """
+def init_fold():
+    var.fold = Fold('images/fold.png')
+    var.fold_label = TextBox(var.screen, var.width - 870, var.height - 80, 55, 25, \
+                                fontSize=15, borderThickness=0, colour=var.light_grey)
+    var.fold_label.setText("Fold")
+    var.fold_label.disable()
 
 
 """ Adds appropriate up/down bar buttons to display depending on the
@@ -197,8 +215,11 @@ def reset_tool():
     if var.tool:
         print("reset")
         var.tool._state = "unselected"
+        var.tool.num_shape = 0
+        var.tool.rotation = 0
         var.tool.draw()
         var.tool = None
+
 
 """ Selects the first tool in the toolbar if add operation is selected
     and unselects any tools if remove is selected """
@@ -213,6 +234,8 @@ def check_op():
         # if "remove" operation is selected, unselect tool
         elif var.op.name == "remove" and var.tool and index == 0:
             var.tool._state = "unselected"
+            var.tool.num_shape = 0
+            var.tool.rotation = 0
             var.tool.draw()
             var.tool = None
         break
@@ -221,23 +244,23 @@ def check_op():
 """ Displays opaque tool where the mouse is located to show tool 
     to add to screen when clicked """
 def draw_shadow_tool(p, tool, screen = var.screen):
-    image = tool.rev_img_load if tool.rotation == 2 and tool.rev_img_load else tool.image_load
-    image = tool.alt_image_load if tool.alt_image_load else image
-    # transparent = pygame.Surface(var.dimensions, pygame.SRCALPHA)
-    # transparent.fill(var.transparent)
-    r_image = pygame.transform.rotate(image, tool.rotation * 90).convert_alpha()
-    r_image.set_alpha(100)
-    _image = pygame.transform.smoothscale(r_image, \
-        (tool.toolsizex, tool.toolsizey)).convert_alpha()
+    image = tool.shapes[tool.num_shape]
+    image = tool.rev_img_load if tool.rotation == 4 and tool.rev_img_load else image
+    transparent = pygame.Surface(var.dimensions, pygame.SRCALPHA)
+    transparent.fill(var.transparent)
+    _image = pygame.transform.smoothscale(image, \
+        (tool.toolsizex, tool.toolsizey))
+    _image.set_alpha(100)
+    r_image = pygame.transform.rotate(_image, tool.rotation * 45)
     # Re-position the image
-    rect = _image.get_rect()
+    rect = r_image.get_rect()
     rect.center = p[0], p[1]
+    transparent.blit(r_image, rect)
     # crop image
     # portion_dim = (var.width-590, var.height)
     # portion = pygame.Rect(400, 0, portion_dim[0], portion_dim[1])
-    # transparent.blit(_image, rect)
     # sub = transparent.subsurface(portion).convert_alpha()
-    screen.blit(_image, rect)
+    screen.blit(transparent, (0,0))
 
 
 """ Displays opaque circle where the mouse is located to show area 
@@ -253,8 +276,8 @@ def draw_shadow(p, screen = var.screen):
 def draw_slider():
     var.text_box.setText(var.slider.getValue())
     var.slider.show()
-    var.text_box.show()
     var.slider.draw()
+    var.text_box.show()
     var.text_box.draw()
 
 
@@ -272,7 +295,14 @@ def draw_reorder():
     var.reorder_label.draw()
 
 
-""" Draw screen, including background and buttons """
+""" Draw fold button on the bottom left of screen """
+def draw_fold():
+    var.fold.draw()
+    var.fold_label.setText("Fold")
+    var.fold_label.draw()
+
+
+""" Draw screen, including background, and undo/redo & toolbar buttons """
 def draw_screen():
     # Fill it in with light grey
     var.screen.fill(var.light_grey)
@@ -286,7 +316,7 @@ def draw_screen():
     draw_buttons()
 
 
-""" Draw buttons, including bar buttons and undo/redo buttons """
+""" Draw bar buttons and undo/redo buttons """
 def draw_buttons():
     # Draw undo/redo buttons
     for do in var._undo_redo:
@@ -299,8 +329,7 @@ def draw_buttons():
         button.draw(var.screen)
 
 
-
-""" Draw buttons, including steps, tools and operations. """
+""" Draw variables, including steps, tools and operations. """
 def draw_variables():
     toolbar = var._tools if not var.final else var._final_tools
     for op in var._operations:
@@ -308,7 +337,6 @@ def draw_variables():
     for step in var._steps:
         step.draw(var.screen)
     for tool in toolbar[var.tool_screen]:
-        # print(tool._state)
         tool.draw(var.screen)
 
 
@@ -318,54 +346,54 @@ def draw_canvas(num, screen = var.screen):
         if addition[0] == "remove":
             remove((addition[1], addition[2]), addition[3], screen)
         else:
-            add_tool((addition[1], addition[2]), addition[0], addition[3], screen)
+            # add selected tool ((x,y), name, rotation, shape, screen) to canvas at selected step
+            add_tool((addition[1], addition[2]), addition[0], addition[3], addition[4], screen)
     return screen
-
-
-""" Draw one new tool addition onto the canvas """
-def draw_new_tool():
-    # verify the most receent addition the canvas is an addition
-    addition = var.canvas[var.step.num][-1]
-    if addition[0] == "remove":
-        print("cannot add removal of size " + addition[0] + " to canvas")
-    else:
-        # add selected tool (position, name, and rotation) to canvas at selected step
-        add_tool((addition[1], addition[2]), addition[0], addition[3])
-
-
-""" Draw one new removal onto the canvas """
-def remove_new_circle():
-    # verify the most receent addition the canvas is a removal
-    subtraction = var.canvas[var.step.num][-1]
-    if subtraction[0] == "remove":
-        # remove at position and size from canvas at selected step
-        remove((subtraction[1], subtraction[2]), subtraction[3])
-    else:
-        print("cannot remove " + subtraction[0] + " from canvas")
 
 
 """ Takes a point and a tool as input, resizes the image, and places 
     an image of the tool on the screen / workspace """
-def add_tool(position, tool, rotation, screen=var.screen):
+def add_tool(position, tool, rotation, shape, screen=var.screen):
     print("adding tool...\n")
-    image = tool.alt_image_load if tool.alt_image_load else tool.image_load
-    image = tool.rev_img_load if rotation == 2 and tool.rev_img_load else image
-    r_image = pygame.transform.rotate(image, rotation * 90)
-    _image = pygame.transform.smoothscale(r_image, \
+    image = tool.shapes[shape]
+    image = tool.rev_img_load if rotation == 4 and tool.rev_img_load else image
+    _image = pygame.transform.smoothscale(image, \
             (tool.toolsizex, tool.toolsizey))
+    r_image = pygame.transform.rotate(_image, rotation * 45)
     # Re-position the image
-    rect = _image.get_rect()
+    rect = r_image.get_rect()
     rect.center = position[0], position[1]
-    screen.blit(_image, rect)
+    screen.blit(r_image, rect)
 
 
 """ Takes a point as input and places a circle on the screen / workspace 
     to "remove" material """
 def remove(position, size, screen=var.screen):
     print("removing material...\n")
-    transparent = pygame.Surface((100, 100), pygame.SRCALPHA)
-    transparent.fill(var.transparent)
-    # pygame.draw.circle(transparent, var.light_grey, position, size)
+    # transparent = pygame.Surface((var.width, var.height), pygame.SRCALPHA)
+    # transparent.fill(var.transparent)
     pygame.draw.circle(screen, var.transparent, position, size)
-    screen.blit(transparent, (position[0], position[1]))
-    # screen.blit(transparent, (position[0], position[1]))
+    # pygame.draw.circle(transparent, var.transparent, position, size)
+    # screen.blit(transparent, (0,0))
+
+
+""" Draw one new tool addition onto the canvas """
+def draw_new_tool():
+    # verify the most recent addition the canvas is an addition
+    addition = var.canvas[var.step.num][-1]
+    if addition[0] == "remove":
+        print("cannot add removal of size " + addition[0] + " to canvas")
+    else:
+        # add selected tool ((x,y)), name, rotation, shape, screen) to canvas at selected step
+        add_tool((addition[1], addition[2]), addition[0], addition[3], addition[4])
+
+
+""" Draw one new removal onto the canvas """
+def remove_new_circle():
+    # verify the most recent addition the canvas is a removal
+    subtraction = var.canvas[var.step.num][-1]
+    if subtraction[0] == "remove":
+        # remove at position and size from canvas at selected step
+        remove((subtraction[1], subtraction[2]), subtraction[3])
+    else:
+        print("cannot remove " + subtraction[0] + " from canvas")
