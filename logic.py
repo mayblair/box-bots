@@ -8,6 +8,8 @@ from classes import Step, Operation, Tool, UndoRedo, BarButton, \
 
 undo_label = None
 redo_label = None
+add_label = None
+remove_label = None
 
 """ Takes a list of image file names as input and displays them as tools on
     the lefthand side of the screen """
@@ -112,9 +114,11 @@ def init_steps(image_list):
 """ Takes a list of image file names as input and displays them as operations
     on the bottom of the screen / workspace """
 def init_operations(operations, names):
+    global add_label
+    global remove_label
     print("displaying operations...\n")
     # Begin operation list on bottom of workspace
-    location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 100)
+    location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 110)
     for count, image in enumerate(operations):
         this_op = Operation(image, (location[0] + 125*count, location[1]), names[count])
         if count == 0:
@@ -123,6 +127,15 @@ def init_operations(operations, names):
         else:
             this_op._state = "unselected"
         var._operations.add(this_op)
+    
+    add_label = TextBox(var.screen, var.width - 660, var.height - 50, 55, 25, \
+                                fontSize=15, borderThickness=0, colour=var.light_grey)
+    add_label.setText("Add")
+    add_label.disable()
+    remove_label = TextBox(var.screen, var.width - 550, var.height - 50, 55, 25, \
+                                fontSize=15, borderThickness=0, colour=var.light_grey)
+    remove_label.setText("Remove")
+    remove_label.disable()
 
 
 """ Displays undo and redo buttons on the bottom right of the screen / workspace"""
@@ -165,7 +178,7 @@ def init_slider():
 """ Displays rotation button and label on the bottom left of screen """
 def init_rotate():
     var.rotate = Rotate('images/rotate.png')
-    var.rotate_label = TextBox(var.screen, var.width - 1010, var.height - 80, 55, 25, \
+    var.rotate_label = TextBox(var.screen, var.width - 1010, var.height - 50, 55, 25, \
                                fontSize=15, borderThickness=0, colour=var.light_grey)
     var.rotate_label.setText("Rotate")
     var.rotate_label.disable()
@@ -174,7 +187,7 @@ def init_rotate():
 """ Displays reorder button and label on the bottom right of screen """
 def init_reorder():
     var.reorder = Reorder('images/reorder.png')
-    var.reorder_label = TextBox(var.screen, var.width - 355, var.height - 80, 55, 25, \
+    var.reorder_label = TextBox(var.screen, var.width - 355, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.reorder_label.setText("Reorder")
     var.reorder_label.disable()
@@ -183,7 +196,7 @@ def init_reorder():
 """ Displays fold button and label on the bottom left of screen """
 def init_fold():
     var.fold = Fold('images/fold.png')
-    var.fold_label = TextBox(var.screen, var.width - 870, var.height - 80, 55, 25, \
+    var.fold_label = TextBox(var.screen, var.width - 870, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.fold_label.setText("Fold")
     var.fold_label.disable()
@@ -334,6 +347,8 @@ def draw_variables():
     toolbar = var._tools if not var.final else var._final_tools
     for op in var._operations:
         op.draw(var.screen)
+    add_label.draw()
+    remove_label.draw()
     for step in var._steps:
         step.draw(var.screen)
     for tool in toolbar[var.tool_screen]:

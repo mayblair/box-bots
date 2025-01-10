@@ -176,7 +176,7 @@ class Operation(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
-        self._size = 80
+        self._size = 82
         self._x = point[0]
         self._y = point[1]
         self.name = name
@@ -363,8 +363,8 @@ class Rotate(pygame.sprite.Sprite):
     
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 980, var.height - 130), 50)
-        self.rect.center = var.width - 980, var.height - 130
+                           (var.width - 980, var.height - 110), 50)
+        self.rect.center = var.width - 980, var.height - 110
         screen.blit(self.image, self.rect)
 
 
@@ -412,8 +412,8 @@ class Reorder(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 325, var.height - 130), 50)
-        self.rect.center = var.width - 325, var.height - 130
+                           (var.width - 325, var.height - 110), 50)
+        self.rect.center = var.width - 325, var.height - 110
         screen.blit(self.image, self.rect)
         
 
@@ -449,6 +449,6 @@ class Fold(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 850, var.height - 130), 50)
-        self.rect.center = var.width - 850, var.height - 130
+                           (var.width - 850, var.height - 110), 50)
+        self.rect.center = var.width - 850, var.height - 110
         screen.blit(self.image, self.rect)
