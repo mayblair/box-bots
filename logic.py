@@ -16,7 +16,7 @@ remove_label = None
 def init_toolbar(tools, sizes):
     print("displaying tools...\n")
     # Begin tool list on top left side of screen
-    location = (130, 120)
+    location = (120, 120)
     var.tool_screen = 0
     for count, image in enumerate(tools):
         if "rubber" in image:
@@ -56,7 +56,7 @@ def init_toolbar(tools, sizes):
     the contents of each step's canvas """
 def final_toolbar():
     global var
-    location = (130, 120)
+    location = (120, 120)
     var.tool_screen = 0
     var._final_tools = []
     reset_tool()
@@ -98,10 +98,10 @@ def final_toolbar():
     signify it is the current build goal. """
 def init_steps(image_list):
     print("displaying steps...\n")
-    # Calculate space between steps from length of instruction
-    spacing = (var.width - 470) / len(image_list)
+    # Calculate space between steps from length of total steps
+    spacing = (var.width - 450) / len(image_list)
     # Set Location of steps to be centered above the workspace
-    location = (500, 100)
+    location = (450, 100)
     
     # Begin step display with first step highlighted
     for count, image in enumerate(image_list):
@@ -335,7 +335,7 @@ def draw_screen():
     # Fill it in with light grey
     var.screen.fill(var.light_grey)
     # Draw toolbar rectangle
-    background = pygame.Rect(0, 0, 345, var.height)
+    background = pygame.Rect(0, 0, 325, var.height)
     pygame.draw.rect(var.screen, var.more_grey, background)
     # Draw lines to section canvas from steps and operations
     pygame.draw.line(var.screen, var.more_grey, (365, 210), (var.width - 50, 210), 4)
@@ -367,7 +367,11 @@ def draw_variables():
     add_label.draw()
     remove_label.draw()
     for step in var._steps:
-        step.draw(var.screen)
+        if step._state == "selected":
+            selected = step
+        else:
+            step.draw(var.screen)
+    selected.draw(var.screen)
     for tool in toolbar[var.tool_screen]:
         tool.draw(var.screen)
 

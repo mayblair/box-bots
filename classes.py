@@ -43,19 +43,19 @@ class Step(pygame.sprite.Sprite):
         if self._state == "unselected":
             # Draw a dark grey background rectangle with a small image
             image_surf = pygame.transform.smoothscale(self.image, (60, 60))
-            r_width, r_height  = image_surf.get_size()
+            r_width, r_height = image_surf.get_size()
             background = pygame.Rect(self._x - r_width//2 - 15, self._y - r_height//2 - 15, \
                 r_width + 30, r_height + 30)
             pygame.draw.rect(screen, var.purple_grey, background, 0, 5)
         elif self._state == "selected":
-            image_surf = pygame.transform.smoothscale(self.image, (140, 140))
-            r_width, r_height  = image_surf.get_size()
+            image_surf = pygame.transform.smoothscale(self.image, (145, 145))
+            r_width, r_height = image_surf.get_size()
             # Create large light background offset from image
-            light_background = pygame.Rect(self._x - r_width//2 - 35, \
-                self._y - r_height//2 - 10, r_width + 70, r_height + 20)
+            light_background = pygame.Rect(self._x - r_width//2 - 10, \
+                self._y - r_height//2 - 10, r_width + 20, r_height + 20)
             # Create border around the background
-            border = pygame.Rect(self._x - r_width//2 - 42, \
-                self._y - r_height//2 - 17, r_width + 84, r_height + 34)
+            border = pygame.Rect(self._x - r_width//2 - 17, \
+                self._y - r_height//2 - 17, r_width + 34, r_height + 34)
             pygame.draw.rect(screen, var.purple_dark, border, 0, 5)
             pygame.draw.rect(screen, var.purple_light, light_background, 0, 5)
         else:
@@ -134,24 +134,6 @@ class Tool(pygame.sprite.Sprite):
             self._state = "selected"
             self.draw()
             var.tool = self
-        elif var.op.name == "remove" and var.op._state == "selected":
-            pass
-            # for op in var._operations:
-            #     if op.name == "add":
-            #         op._state = "prompted"
-            #         op.draw()
-            #         for tool in var._tools[var.tool_screen]:
-            #             tool._state = "prompted"
-            #             tool.draw()
-            #         pygame.display.flip()
-            #         pygame.time.delay(120)
-            #         op._state = "unselected"
-            #         op.draw()
-            #         for tool in var._tools[var.tool_screen]:
-            #             tool._state = "darkened"
-            #             tool.draw()
-        else:
-            print("no operation selected")
 
     def draw(self, screen = var.screen):
         # Determine if step is open and to be highlighted or closed and to be
@@ -336,11 +318,11 @@ class BarButton(pygame.sprite.Sprite):
     def draw(self, screen = var.screen):
         # Draw undo/redo button with appropriate location and image        
         if self.name == "up":
-            pygame.draw.circle(var.screen, var.yellow_dark, (280, 70), 30)
-            self.rect.center = 280, 68
+            pygame.draw.circle(var.screen, var.yellow_dark, (265, 70), 30)
+            self.rect.center = 265, 68
         elif self.name == "down":
-            pygame.draw.circle(var.screen, var.yellow_dark, (280, var.height-70), 30)
-            self.rect.center = 280, var.height-68
+            pygame.draw.circle(var.screen, var.yellow_dark, (265, var.height-70), 30)
+            self.rect.center = 265, var.height-68
         screen.blit(self.image, self.rect)
         
 
