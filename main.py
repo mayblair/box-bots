@@ -1,6 +1,7 @@
 # PYGAME INTERFACE for modular building instructions with images
 import pygame
 import pygame_widgets
+from pygame.font import *
 import os
 import sys
 from settings import var
@@ -65,15 +66,34 @@ def process_events(events):
                         init_slider()
             # click on tool bar
             elif (350 > x > 0):
+                # update tools and bar buttons
                 var._bar_buttons.update(events)
                 toolbar[var.tool_screen].update(events)
+                # if remove is selected, briefly change tools & add op colors
+                if var.op.name == "remove":
+                    # find add operation sprite
+                    add_op = [op for op in var._operations if op.name == "add"][0]
+                    add_op._state = "prompted"
+                    add_op.draw()
+                    for tool in toolbar[var.tool_screen]:
+                        tool._state = "prompted"
+                        tool.draw()
+                    font = pygame.font.SysFont(None, 30)
+                    text = font.render('Click "Add"', True, var.black)
+                    var.screen.blit(text, pygame.Rect(x - 50, y - 35, 110, 30))
+                    # flash alternate colors for a moment
+                    pygame.display.flip()
+                    pygame.time.delay(320)
+                    add_op._state = "unselected"
+                    for tool in toolbar[var.tool_screen]:
+                        tool._state = "darkened"
             # click on steps
             elif (var.width > x > 305 and y < 230):
                 old_step = var.step.num
                 for step in var._steps:
                     updated = step.update(events)
                     if updated:
-                        # if the final step is chosen, change to step-based toobar
+                        # if the final step is chosen, change to step-based toolbar
                         if var.step.num == len(var._steps) - 1:
                             var.final = True
                             final_toolbar()
@@ -124,13 +144,14 @@ def start():
             draw_slider()
             draw_shadow((x,y), var.screen)
         # otherwise add is selected, show a shadow of image on mouse
-        elif var.op.name == "add" and var.tool and var.op._state != "prompted":
+        elif var.op.name == "add" and var.op._state != "prompted":
             var.slider.hide()
             var.text_box.hide()
             draw_rotate()
             draw_reorder()
             draw_fold()
-            draw_shadow_tool((x,y), var.tool, var.screen)
+            if var.tool:
+                draw_shadow_tool((x,y), var.tool, var.screen)
         pygame.display.flip()
     pygame.quit()
 
@@ -157,6 +178,7 @@ def set_up_vars():
     op_names = ['add', 'remove']
     ops = ['images/operations/' + o for o in op_list if "png" in o]
     init_operations(ops, op_names)
+    
 
 if __name__ == '__main__':
     # MAIN PROGRAM VARIABLES

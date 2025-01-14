@@ -14,7 +14,7 @@ class Var():
         self.half_height = 423
         self.setup = True
         self.time = 0
-
+        # project name (i.e., tutorial, car, catapult)
         self.project = ""
 
         self.screen = pygame.display.set_mode(self.dimensions)
@@ -55,8 +55,13 @@ class Var():
         self.redo = {}
         
         # COLORS
-        self.green = (30, 179, 113)
-        self.purple = (179, 30, 113)
+        self.yellow_light = (252, 252, 249)
+        self.yellow_grey = (250, 250, 237)
+        self.yellow_dark = (232, 232, 164)
+        self.purple_light = (250, 247, 252)
+        self.purple_grey = (225, 220, 235)
+        self.purple_mid = (179, 161, 212)
+        self.purple_dark = (148, 129, 184)
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.light_grey = (240, 240, 240)
@@ -65,7 +70,7 @@ class Var():
         self.more_grey = (190, 190, 190)
         self.mostly_grey = (165, 165, 165)
         self.most_grey = (145,145,145)
-        self.transparent = (240, 240, 240, 0)
+        self.transparent = (0, 0, 0, 0)
         self.transparent_grey = (165, 165, 165, 100)
 
 var = Var()

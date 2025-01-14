@@ -16,7 +16,7 @@ remove_label = None
 def init_toolbar(tools, sizes):
     print("displaying tools...\n")
     # Begin tool list on top left side of screen
-    location = (130, 150)
+    location = (130, 120)
     var.tool_screen = 0
     for count, image in enumerate(tools):
         if "rubber" in image:
@@ -56,8 +56,9 @@ def init_toolbar(tools, sizes):
     the contents of each step's canvas """
 def final_toolbar():
     global var
-    location = (130, 150)
+    location = (130, 120)
     var.tool_screen = 0
+    var._final_tools = []
     reset_tool()
     # create final toolbar with contents of every canvas except the last one
     for index, step in enumerate(var._steps):
@@ -75,10 +76,14 @@ def final_toolbar():
         img_name = 'images/' + var.project + '/tools/steps/step' + str(step.num) + '.png'
         pygame.image.save(_image, img_name)
         my_tool = Tool(img_name, (location[0], location[1] + 200*(index%4)), 1000, 1000)
-        my_tool._state = "unselected"
+        if index == 0:
+            my_tool._state = "selected"
+            var.tool = my_tool
+        else:
+            my_tool._state = "unselected"
         # make a sprite group for every screen of toolbar (4)
         if index % 4 == 0:
-            var._final_tools += [pygame.sprite.Group()]
+            var._final_tools.append(pygame.sprite.Group())
         # add tools to the appropriate tool screen list
         if index < 4:
             var._final_tools[0].add(my_tool)
@@ -168,9 +173,9 @@ def init_bar_buttons():
 
 """ Displays slider on the bottom left of screen with a textbox """
 def init_slider():
-    var.slider = Slider(var.screen, var.width-250, var.height-160, 150, 15, \
-                    min=5, max=80, step=1, initial=12)
-    box = TextBox(var.screen, var.width-75, var.height-160, 35, 25, fontSize=15)
+    var.slider = Slider(var.screen, var.width - 1010, var.height - 130, 220, 17, \
+                    min=5, max=80, step=1, initial=12, handleColour = var.purple_dark)
+    box = TextBox(var.screen, var.width - 940, var.height - 90, 30, 30, fontSize=16)
     box.disable()
     var.text_box = box
 
@@ -205,20 +210,25 @@ def init_fold():
 """ Adds appropriate up/down bar buttons to display depending on the
     toolscreen """
 def toggle_bar_buttons():
+    toolbar = var._tools if not var.final else var._final_tools
     var.active_bar_buttons = []
     for button in var._bar_buttons:
-        # if on the last toolbar screen, only display up arrow
-        if var.tool_screen == len(var._tools) - 1:
-            if button.name == "up":
-                var.active_bar_buttons = [button]
-                button.draw(var.screen)
+        # if on the only toolbar screen, display no buttons
+        if len(toolbar) <= 1:
+            var.active_bar_buttons = []
         # if on the first toolbar screen, only display down arrow
         elif var.tool_screen == 0:
             if button.name == "down":
                 var.active_bar_buttons = [button]
                 button.draw(var.screen)
+        # if on the last toolbar screen, only display up arrow
+        elif var.tool_screen == len(toolbar) - 1:
+            if button.name == "up":
+                var.active_bar_buttons = [button]
+                button.draw(var.screen)
+        # if on a toolbar screen neither first or last, display both
         else:
-            var.active_bar_buttons += button
+            var.active_bar_buttons += [button]
             button.draw(var.screen)
 
 
@@ -239,19 +249,24 @@ def reset_tool():
 def check_op():
     toolbar = var._tools if not var.final else var._final_tools
     for index,tool in enumerate(toolbar[var.tool_screen]):
-        # if "add" operation is selected, select first tool
-        if var.op.name == "add" and not var.tool and index == 0:
-            tool._state = "selected"
+        # if "add" operation is selected, brighten all tools
+        if var.op.name == "add":
+            # select first tool
+            if not var.tool and index == 0:
+                tool._state = "selected"
+                var.tool = tool
+            else:
+                tool._state = "unselected"
             tool.draw()
-            var.tool = tool
-        # if "remove" operation is selected, unselect tool
-        elif var.op.name == "remove" and var.tool and index == 0:
-            var.tool._state = "unselected"
-            var.tool.num_shape = 0
-            var.tool.rotation = 0
-            var.tool.draw()
-            var.tool = None
-        break
+        # if "remove" operation is selected, darken all tools
+        elif var.op.name == "remove":
+            # unselect previously selected tool
+            if var.tool:
+                var.tool.num_shape = 0
+                var.tool.rotation = 0
+                var.tool = None
+            tool._state = "darkened"
+            tool.draw()
 
 
 """ Displays opaque tool where the mouse is located to show tool 
@@ -263,12 +278,12 @@ def draw_shadow_tool(p, tool, screen = var.screen):
     transparent.fill(var.transparent)
     _image = pygame.transform.smoothscale(image, \
         (tool.toolsizex, tool.toolsizey))
-    _image.set_alpha(100)
     r_image = pygame.transform.rotate(_image, tool.rotation * 45)
     # Re-position the image
     rect = r_image.get_rect()
     rect.center = p[0], p[1]
     transparent.blit(r_image, rect)
+    transparent.set_alpha(100)
     # crop image
     # portion_dim = (var.width-590, var.height)
     # portion = pygame.Rect(400, 0, portion_dim[0], portion_dim[1])
@@ -344,7 +359,9 @@ def draw_buttons():
 
 """ Draw variables, including steps, tools and operations. """
 def draw_variables():
+    # set toolbar according to step number
     toolbar = var._tools if not var.final else var._final_tools
+    # draw operations, steps, and tools
     for op in var._operations:
         op.draw(var.screen)
     add_label.draw()
@@ -385,11 +402,11 @@ def add_tool(position, tool, rotation, shape, screen=var.screen):
     to "remove" material """
 def remove(position, size, screen=var.screen):
     print("removing material...\n")
-    # transparent = pygame.Surface((var.width, var.height), pygame.SRCALPHA)
-    # transparent.fill(var.transparent)
-    pygame.draw.circle(screen, var.transparent, position, size)
-    # pygame.draw.circle(transparent, var.transparent, position, size)
-    # screen.blit(transparent, (0,0))
+    transparent = pygame.Surface((var.width, var.height), pygame.SRCALPHA)
+    transparent.fill(var.transparent)
+    # pygame.draw.circle(screen, var.transparent, position, size)
+    pygame.draw.circle(transparent, var.light_grey, position, size)
+    screen.blit(transparent, (0,0))
 
 
 """ Draw one new tool addition onto the canvas """
