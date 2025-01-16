@@ -73,7 +73,7 @@ def process_events(events):
                     check_op()
             # CLICK ON STEPS
             elif (var.width > x > 305 and y < 230):
-                old_step = var.step.num
+                old_step = var.step
                 for step in var._steps:
                     updated = step.update(events)
                     if updated:
@@ -82,13 +82,15 @@ def process_events(events):
                             var.final = True
                             final_toolbar()
                         # if the previous step chosen was final step
-                        elif old_step == len(var._steps) - 1:
+                        elif old_step.num == len(var._steps) - 1:
                             var.final = False
                             reset_tool()
                             # check operations to properly draw tools
                             check_op()
                         else:
                             var.final = False
+                        old_step.text.show()
+                        var.step.text.hide()
                         break
             else:
                 print("unknown update at " + str(x) + " " + str(y))
@@ -119,22 +121,30 @@ def start():
         events = pygame.event.get()
         pygame_widgets.update(events)
         process_events(events)
-        # if remove is selected and slider is initiated, draw slider and shadow circle
+        # if remove is selected and slider is initiated
         if var.op.name == "remove" and var.slider:
-            # set text labels of rotate, reorder, and fold to be blank
-            var.rotate_label.setText("")
-            var.fold_label.setText("")
+            # hide text labels of rotate and fold
+            var.rotate_label.hide()
+            var.fold_label.hide()
+            # draw reorder and slider
             draw_reorder()
             draw_slider()
+            # draw slider and shadow circle
             draw_shadow((x,y), var.screen)
-        # otherwise add is selected, show a shadow of image on mouse
+        # if add is selected
         elif var.op.name == "add" and var.op._state == "selected":
+            # hide slider, slider text, and fold
             var.slider.hide()
             var.text_box.hide()
+            var.fold_label.hide()
+            # draw reorder and rotate
             draw_rotate()
             draw_reorder()
-            draw_fold()
+            # show a shadow of image on mouse
             if var.tool:
+                # draw fold if foldable tool is selected
+                if var.tool.foldable:
+                    draw_fold()
                 draw_shadow_tool((x,y), var.tool, var.screen)
         pygame.display.flip()
     pygame.quit()

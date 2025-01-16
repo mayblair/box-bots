@@ -85,7 +85,7 @@ class Step(pygame.sprite.Sprite):
     be added to the canvas with a click and drag gesture. Only one 
     tool in the group can be selected at any time. """
 class Tool(pygame.sprite.Sprite):
-    def __init__(self, image, point, toolsizex, toolsizey, state = "unselected", shapes = [], rev_img = None):
+    def __init__(self, image, point, toolsizex, toolsizey, state = "unselected", shapes = [], rev_img = None, foldable = False):
         # Call the parent class (Sprite) constructor
         super().__init__()
     
@@ -95,6 +95,7 @@ class Tool(pygame.sprite.Sprite):
         self._x = point[0]
         self._y = point[1]
         self._state = state
+        self.foldable = foldable
         self.rotation = 0
 
         # Pass in the image, and resize it

@@ -31,7 +31,7 @@ def init_toolbar(tools, sizes):
             for index in range(1, 4):
                 shapes.append('images/' + var.project + '/tools/rubber_alt' + str(index) + '.png')
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
-                            shapes = shapes)
+                            shapes = shapes, foldable = True)
         elif "bottlecap" in image:
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
                            rev_img = 'images/' + var.project + '/tools/bottlecaprev.png')
@@ -40,7 +40,7 @@ def init_toolbar(tools, sizes):
             for index in range(1, 5):
                 shapes.append('images/' + var.project + '/tools/cardboard_alt' + str(index) + '.png')
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count], \
-                           shapes = shapes)
+                           shapes = shapes, foldable = True)
         else:
             my_tool = Tool(image, (location[0], location[1] + 200*(count%4)), sizes[count], sizes[count])
         if count == 0:
@@ -214,7 +214,7 @@ def init_fold():
     var.fold = Fold('images/fold.png')
     var.fold_label = TextBox(var.screen, var.width - 870, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
-    var.fold_label.setText("Fold")
+    var.fold_label.setText("")
     var.fold_label.disable()
 
 
@@ -266,7 +266,7 @@ def check_op():
             if not var.tool and index == 0:
                 tool._state = "selected"
                 var.tool = tool
-            else:
+            elif tool._state == "darkened":
                 tool._state = "unselected"
         # if "remove" operation is selected, darken all tools
         elif var.op.name == "remove":
@@ -322,6 +322,7 @@ def draw_slider():
 """ Draw rotation button on the bottom left of screen """
 def draw_rotate():
     var.rotate.draw()
+    var.rotate_label.show()
     var.rotate_label.setText("Rotate")
     var.rotate_label.draw()
 
@@ -337,6 +338,7 @@ def draw_reorder():
 def draw_fold():
     var.fold.draw()
     var.fold_label.setText("Fold")
+    var.fold_label.show()
     var.fold_label.draw()
 
 
