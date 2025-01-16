@@ -257,7 +257,6 @@ def check_op():
                 var.tool = tool
             else:
                 tool._state = "unselected"
-            tool.draw()
         # if "remove" operation is selected, darken all tools
         elif var.op.name == "remove":
             # unselect previously selected tool
@@ -266,7 +265,7 @@ def check_op():
                 var.tool.rotation = 0
                 var.tool = None
             tool._state = "darkened"
-            tool.draw()
+        tool.draw()
 
 
 """ Displays opaque tool where the mouse is located to show tool 
@@ -367,11 +366,7 @@ def draw_variables():
     add_label.draw()
     remove_label.draw()
     for step in var._steps:
-        if step._state == "selected":
-            selected = step
-        else:
-            step.draw(var.screen)
-    selected.draw(var.screen)
+        step.draw(var.screen)
     for tool in toolbar[var.tool_screen]:
         tool.draw(var.screen)
 

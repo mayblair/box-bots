@@ -27,13 +27,10 @@ def process_events(events):
                 running = False
                 return False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # pygame_widgets.update(events)
-            # var._undo_redo.update(events)
-            # var._bar_buttons.update(events)
+            # get mouse position and select normal  or final toolbar
             x, y = pygame.mouse.get_pos()
             toolbar = var._tools if not var.final else var._final_tools
-
-            # click on canvas
+            # CLICK ON CANVAS
             if (var.width-100 > x > 350 and 630 > y > 230):
                 # store tool info in dictionary under selected step
                 if var.op.name == "add" and var.tool:
@@ -47,47 +44,34 @@ def process_events(events):
                         var.canvas[var.step.num] += [("remove", x, y, var.slider.getValue())]
                         remove_new_circle()
                         return True
-            # click on operations
+            # CLICK ON OPERATIONS
             elif (var.width - 20 > x > 350 and var.height > y > 690):
+                # update all the operations, tools, and operative buttons
                 toolbar[var.tool_screen].update(events)
                 var.rotate.update(events)
                 var.reorder.update(events)
                 var.fold.update(events)
                 var._undo_redo.update(events)
-                # check add and remove ops for a change
                 for op in var._operations:
-                    updated = op.update(events)
-                    if updated:
-                        check_op()
-                        break
-                # if remove op is selected for first time, init slider
-                if var.op.name == "remove":
-                    if not var.slider:
-                        init_slider()
-            # click on tool bar
+                    op.update(events)
+                check_op()
+                # if remove op is selected for the first time, init slider
+                if var.op.name == "remove" and not var.slider:
+                    init_slider()
+            # CLICK ON TOOLBAR
             elif (350 > x > 0):
-                # update tools and bar buttons
+                # update tools and tool bar buttons
                 var._bar_buttons.update(events)
                 toolbar[var.tool_screen].update(events)
-                # if remove is selected, briefly change tools & add op colors
-                if var.op.name == "remove":
-                    # find add operation sprite
+                # if remove is selected, change to add operation
+                if var.op.name == "remove" and var.op._state == "selected":
+                    # find add operation sprite and select it
                     add_op = [op for op in var._operations if op.name == "add"][0]
-                    add_op._state = "prompted"
-                    add_op.draw()
-                    for tool in toolbar[var.tool_screen]:
-                        tool._state = "prompted"
-                        tool.draw()
-                    font = pygame.font.SysFont(None, 30)
-                    text = font.render('Click "Add"', True, var.black)
-                    var.screen.blit(text, pygame.Rect(x - 50, y - 35, 110, 30))
-                    # flash alternate colors for a moment
-                    pygame.display.flip()
-                    pygame.time.delay(320)
-                    add_op._state = "unselected"
-                    for tool in toolbar[var.tool_screen]:
-                        tool._state = "darkened"
-            # click on steps
+                    add_op._state = "selected"
+                    var.op._state = "unselected"
+                    var.op = add_op
+                    check_op()
+            # CLICK ON STEPS
             elif (var.width > x > 305 and y < 230):
                 old_step = var.step.num
                 for step in var._steps:
@@ -97,11 +81,11 @@ def process_events(events):
                         if var.step.num == len(var._steps) - 1:
                             var.final = True
                             final_toolbar()
-                            check_op()
                         # if the previous step chosen was final step
                         elif old_step == len(var._steps) - 1:
-                            reset_tool()
                             var.final = False
+                            reset_tool()
+                            # check operations to properly draw tools
                             check_op()
                         else:
                             var.final = False
@@ -144,7 +128,7 @@ def start():
             draw_slider()
             draw_shadow((x,y), var.screen)
         # otherwise add is selected, show a shadow of image on mouse
-        elif var.op.name == "add" and var.op._state != "prompted":
+        elif var.op.name == "add" and var.op._state == "selected":
             var.slider.hide()
             var.text_box.hide()
             draw_rotate()

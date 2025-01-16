@@ -91,7 +91,9 @@ class Tool(pygame.sprite.Sprite):
         self.image_load = pygame.image.load(image).convert_alpha()
         # add the primary image as first in the shapes list
         self.shapes = [self.image_load]
+        # index into shapes to choose the right image
         self.num_shape = 0
+        # total length of shape options
         self.len_shapes = 0
         
         if shapes != []:
@@ -127,9 +129,11 @@ class Tool(pygame.sprite.Sprite):
         global var
         if var.tool:
             var.tool._state = "unselected"
+            var.tool.num_shape = 0
+            var.tool.rotation = 0
             var.tool.draw()
         var.tool = None
-        # if add operation is selected, draw tool
+        # if add operation is selected, draw selected tool
         if var.op.name == "add" and var.op._state == "selected":
             self._state = "selected"
             self.draw()
@@ -145,9 +149,9 @@ class Tool(pygame.sprite.Sprite):
             # Draw a white background circle
             pygame.draw.circle(screen, var.yellow_dark, (self._x, self._y), self._size-10)
             pygame.draw.circle(screen, var.yellow_light, (self._x, self._y), self._size-15)
-        elif self._state == "prompted":
-            # Draw a prompt circle
-            pygame.draw.circle(screen, var.most_grey, (self._x, self._y), self._size-15)
+        # elif self._state == "prompted":
+        #     # Draw a prompt circle
+        #     pygame.draw.circle(screen, var.most_grey, (self._x, self._y), self._size-15)
         elif self._state == "darkened":
             # Draw a darkened circle
             pygame.draw.circle(screen, var.mostly_grey, (self._x, self._y), self._size-15)
@@ -183,14 +187,11 @@ class Operation(pygame.sprite.Sprite):
         self.rect.center = self._x, self._y
 
     def update(self, events):
-        updated = False
         if events:
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.rect.collidepoint(event.pos):
                         self.on_click()
-                        updated = True
-        return updated
 
     def on_click(self):
         if var.op:
@@ -211,9 +212,6 @@ class Operation(pygame.sprite.Sprite):
             # Create large light background offset from image
             pygame.draw.circle(screen, var.purple_dark, (self._x, self._y), self._size-28)
             pygame.draw.circle(screen, var.purple_light, (self._x, self._y), self._size-33)
-        elif self.name == "add" and self._state == "prompted":
-            print("prompt")
-            pygame.draw.circle(screen, var.purple_light, (self._x, self._y), self._size-28)
         else:
             print("no operation state assigned yet")
             pygame.quit()
