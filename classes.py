@@ -1,12 +1,13 @@
 # CLASSES
 import pygame
 from settings import var
+from pygame_widgets.textbox import TextBox
 
 """ Class for an instructional image that can be open or closed 
     in the workspace. Displayed on the top of the workspace. Only 
     one step in the group can be open at any time. """
 class Step(pygame.sprite.Sprite):
-    def __init__(self, image, point, num, state = "closed"):
+    def __init__(self, image, point, num, text, state = "closed"):
         # Call the parent class (Sprite) constructor
         super().__init__()
         self.num = num
@@ -16,8 +17,15 @@ class Step(pygame.sprite.Sprite):
         self.image = pygame.image.load(image).convert_alpha()
         self._x = point[0]
         self._y = point[1]
-        
         self.rect = self.image.get_rect()
+        if text == "Final Build":
+            self.text = TextBox(var.screen, self._x - 40, self._y - 55, 55, 0, \
+                            fontSize=15, borderThickness=0, colour=var.light_grey)
+        else:
+            self.text = TextBox(var.screen, self._x - 25, self._y - 55, 55, 0, \
+                            fontSize=15, borderThickness=0, colour=var.light_grey)
+        self.text.setText(text)
+        self.text.disable()
 
     def update(self, events):
         updated = False
@@ -47,6 +55,8 @@ class Step(pygame.sprite.Sprite):
             background = pygame.Rect(self._x - r_width//2 - 15, self._y - r_height//2 - 15, \
                 r_width + 30, r_height + 30)
             pygame.draw.rect(screen, var.purple_grey, background, 0, 5)
+            # Label the step
+            self.text.draw()
         elif self._state == "selected":
             image_surf = pygame.transform.smoothscale(self.image, (145, 145))
             r_width, r_height = image_surf.get_size()
@@ -149,9 +159,6 @@ class Tool(pygame.sprite.Sprite):
             # Draw a white background circle
             pygame.draw.circle(screen, var.yellow_dark, (self._x, self._y), self._size-10)
             pygame.draw.circle(screen, var.yellow_light, (self._x, self._y), self._size-15)
-        # elif self._state == "prompted":
-        #     # Draw a prompt circle
-        #     pygame.draw.circle(screen, var.most_grey, (self._x, self._y), self._size-15)
         elif self._state == "darkened":
             # Draw a darkened circle
             pygame.draw.circle(screen, var.mostly_grey, (self._x, self._y), self._size-15)
@@ -355,8 +362,8 @@ class Rotate(pygame.sprite.Sprite):
     
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 980, var.height - 110), 45)
-        self.rect.center = var.width - 980, var.height - 110
+                           (var.width - 980, var.height - 100), 45)
+        self.rect.center = var.width - 980, var.height - 100
         screen.blit(self.image, self.rect)
 
 
@@ -393,8 +400,8 @@ class Reorder(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 325, var.height - 110), 45)
-        self.rect.center = var.width - 325, var.height - 110
+                           (var.width - 325, var.height - 100), 45)
+        self.rect.center = var.width - 325, var.height - 100
         screen.blit(self.image, self.rect)
         
 
@@ -431,6 +438,6 @@ class Fold(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 850, var.height - 110), 45)
-        self.rect.center = var.width - 850, var.height - 110
+                           (var.width - 850, var.height - 100), 45)
+        self.rect.center = var.width - 850, var.height - 100
         screen.blit(self.image, self.rect)

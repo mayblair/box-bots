@@ -163,7 +163,8 @@ def set_up_vars():
     ops = ['images/operations/' + o for o in op_list if "png" in o]
     init_operations(ops, op_names)
     
-
+    
+""" Start main function """
 if __name__ == '__main__':
     # MAIN PROGRAM VARIABLES
     project_name = sys.argv[1:]

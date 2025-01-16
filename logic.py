@@ -10,13 +10,20 @@ undo_label = None
 redo_label = None
 add_label = None
 remove_label = None
+tools_label = None
 
 """ Takes a list of image file names as input and displays them as tools on
     the lefthand side of the screen """
 def init_toolbar(tools, sizes):
+    global tools_label
     print("displaying tools...\n")
+    # Label tool list as materials
+    tools_label = TextBox(var.screen, 75, 25, 55, 25, \
+                        fontSize=18, borderThickness=0, colour=var.more_grey)
+    tools_label.setText("Materials")
+    tools_label.disable()
     # Begin tool list on top left side of screen
-    location = (120, 120)
+    location = (120, 150)
     var.tool_screen = 0
     for count, image in enumerate(tools):
         if "rubber" in image:
@@ -56,7 +63,7 @@ def init_toolbar(tools, sizes):
     the contents of each step's canvas """
 def final_toolbar():
     global var
-    location = (120, 120)
+    location = (120, 150)
     var.tool_screen = 0
     var._final_tools = []
     reset_tool()
@@ -105,7 +112,11 @@ def init_steps(image_list):
     
     # Begin step display with first step highlighted
     for count, image in enumerate(image_list):
-        my_step = Step(image, (location[0] + spacing * count, location[1]), count)
+        if count == len(image_list) - 1:
+            text = "Final Build"
+        else:
+            text = "Step " + str(count + 1)
+        my_step = Step(image, (location[0] + spacing * count, location[1]), count, text)
         if count == 0:
             my_step._state = "selected"
             var.step = my_step
@@ -123,7 +134,7 @@ def init_operations(operations, names):
     global remove_label
     print("displaying operations...\n")
     # Begin operation list on bottom of workspace
-    location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 110)
+    location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 100)
     for count, image in enumerate(operations):
         this_op = Operation(image, (location[0] + 125*count, location[1]), names[count])
         if count == 0:
@@ -133,13 +144,13 @@ def init_operations(operations, names):
             this_op._state = "unselected"
         var._operations.add(this_op)
     
-    add_label = TextBox(var.screen, var.width - 660, var.height - 50, 55, 25, \
+    add_label = TextBox(var.screen, var.width - 660, var.height - 40, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     add_label.setText("Add")
     add_label.disable()
-    remove_label = TextBox(var.screen, var.width - 550, var.height - 50, 55, 25, \
+    remove_label = TextBox(var.screen, var.width - 540, var.height - 40, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
-    remove_label.setText("Remove")
+    remove_label.setText("Erase")
     remove_label.disable()
 
 
@@ -338,7 +349,7 @@ def draw_screen():
     pygame.draw.rect(var.screen, var.more_grey, background)
     # Draw lines to section canvas from steps and operations
     pygame.draw.line(var.screen, var.more_grey, (365, 210), (var.width - 50, 210), 4)
-    pygame.draw.line(var.screen, var.more_grey, (365, var.height - 190), (var.width - 50, var.height - 190), 4)
+    pygame.draw.line(var.screen, var.more_grey, (365, var.height - 170), (var.width - 50, var.height - 170), 4)
     # Draw undo/redo and toolbar buttons
     draw_buttons()
 
@@ -350,6 +361,7 @@ def draw_buttons():
         do.draw(var.screen)
     undo_label.draw()
     redo_label.draw()
+    tools_label.draw()
     # toggle and draw toolbar buttons
     toggle_bar_buttons()
     for button in var.active_bar_buttons:
