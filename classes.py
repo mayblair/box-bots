@@ -47,27 +47,37 @@ class Step(pygame.sprite.Sprite):
     
     def draw(self, screen = var.screen):
         # Determine if step is open and to be highlighted or closed and to be
-        # small and shadowed.
+        # small and shadowed with a label.
         if self._state == "unselected":
+            # if final step, color background yellow instead of purple
+            if self.text.getText() == "Final Build":
+                back_color = var.yellow_grey
+            else:
+                back_color = var.purple_grey
             # Draw a dark grey background rectangle with a small image
-            image_surf = pygame.transform.smoothscale(self.image, (60, 60))
+            image_surf = pygame.transform.smoothscale(self.image, (70, 70))
             r_width, r_height = image_surf.get_size()
             background = pygame.Rect(self._x - r_width//2 - 15, self._y - r_height//2 - 15, \
                 r_width + 30, r_height + 30)
-            pygame.draw.rect(screen, var.purple_grey, background, 0, 5)
-            # Label the step
+            pygame.draw.rect(screen, back_color, background, 0, 5)
+            # Label the step if it in not selected
             self.text.draw()
         elif self._state == "selected":
-            image_surf = pygame.transform.smoothscale(self.image, (145, 145))
+            # if final step, color background yellow instead of purple
+            if self.text.getText() == "Final Build":
+                back_color = var.yellow_light
+            else:
+                back_color = var.purple_light
+            image_surf = pygame.transform.smoothscale(self.image, (150, 150))
             r_width, r_height = image_surf.get_size()
             # Create large light background offset from image
-            light_background = pygame.Rect(self._x - r_width//2 - 10, \
-                self._y - r_height//2 - 10, r_width + 20, r_height + 20)
+            light_background = pygame.Rect(self._x - r_width//2 - 15, \
+                self._y - r_height//2 - 15, r_width + 30, r_height + 30)
             # Create border around the background
-            border = pygame.Rect(self._x - r_width//2 - 17, \
-                self._y - r_height//2 - 17, r_width + 34, r_height + 34)
+            border = pygame.Rect(self._x - r_width//2 - 20, \
+                self._y - r_height//2 - 20, r_width + 40, r_height + 40)
             pygame.draw.rect(screen, var.purple_dark, border, 0, 5)
-            pygame.draw.rect(screen, var.purple_light, light_background, 0, 5)
+            pygame.draw.rect(screen, back_color, light_background, 0, 5)
         else:
             print("no step state assigned yet")
             pygame.quit()
@@ -180,7 +190,7 @@ class Operation(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
-        self._size = 82
+        self._size = 75
         self._x = point[0]
         self._y = point[1]
         self.name = name
@@ -215,11 +225,11 @@ class Operation(pygame.sprite.Sprite):
         # small and shadowed.
         if self._state == "unselected":
             # Draw a dark grey background rectangle with a small image
-            pygame.draw.circle(screen, var.purple_mid, (self._x, self._y), self._size-28)
+            pygame.draw.circle(screen, var.purple_mid, (self._x, self._y), self._size-25)
         elif self._state == "selected":
             # Create large light background offset from image
-            pygame.draw.circle(screen, var.purple_dark, (self._x, self._y), self._size-28)
-            pygame.draw.circle(screen, var.purple_light, (self._x, self._y), self._size-33)
+            pygame.draw.circle(screen, var.purple_dark, (self._x, self._y), self._size-25)
+            pygame.draw.circle(screen, var.purple_light, (self._x, self._y), self._size-30)
         else:
             print("no operation state assigned yet")
             pygame.quit()
@@ -234,7 +244,7 @@ class UndoRedo(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
         
-        self._size = 40
+        self._size = 35
         self.name = name
         self._image = image
         self._state = state
@@ -264,9 +274,6 @@ class UndoRedo(pygame.sprite.Sprite):
             if var.redo[step_num]:
                 var.canvas[step_num] += [var.redo[step_num][-1]]
                 var.redo[step_num] = var.redo[step_num][:-1]
-        
-        # self._state = "selected"
-        # self.draw()
     
     def draw(self, screen = var.screen):
         # Draw undo/redo button with appropriate location and image
@@ -324,11 +331,11 @@ class BarButton(pygame.sprite.Sprite):
     def draw(self, screen = var.screen):
         # Draw undo/redo button with appropriate location and image        
         if self.name == "up":
-            pygame.draw.circle(var.screen, var.yellow_dark, (265, 70), 30)
-            self.rect.center = 265, 68
+            pygame.draw.circle(var.screen, var.yellow_dark, (250, 70), 30)
+            self.rect.center = 250, 68
         elif self.name == "down":
-            pygame.draw.circle(var.screen, var.yellow_dark, (265, var.height-70), 30)
-            self.rect.center = 265, var.height-68
+            pygame.draw.circle(var.screen, var.yellow_dark, (250, var.height-70), 30)
+            self.rect.center = 250, var.height-68
         screen.blit(self.image, self.rect)
         
 
@@ -338,7 +345,7 @@ class Rotate(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
-        self._size = 50
+        self._size = 40
         self._image = image
         self._state = state
         # Pass in the image, and resize it
@@ -363,8 +370,8 @@ class Rotate(pygame.sprite.Sprite):
     
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 980, var.height - 100), 45)
-        self.rect.center = var.width - 980, var.height - 100
+                           (var.width - 840, var.height - 100), self._size)
+        self.rect.center = var.width - 840, var.height - 100
         screen.blit(self.image, self.rect)
 
 
@@ -375,7 +382,7 @@ class Reorder(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
-        self._size = 60
+        self._size = 40
         self._image = image
         self._state = state
         # Pass in the image, and resize it
@@ -401,8 +408,8 @@ class Reorder(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 325, var.height - 100), 45)
-        self.rect.center = var.width - 325, var.height - 100
+                           (var.width - 320, var.height - 100), self._size)
+        self.rect.center = var.width - 320, var.height - 100
         screen.blit(self.image, self.rect)
         
 
@@ -413,7 +420,7 @@ class Fold(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
-        self._size = 50
+        self._size = 40
         self._image = image
         self._state = state
         # Pass in the image, and resize it
@@ -439,6 +446,6 @@ class Fold(pygame.sprite.Sprite):
 
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
-                           (var.width - 850, var.height - 100), 45)
-        self.rect.center = var.width - 850, var.height - 100
+                           (var.width - 970, var.height - 100), self._size)
+        self.rect.center = var.width - 970, var.height - 100
         screen.blit(self.image, self.rect)

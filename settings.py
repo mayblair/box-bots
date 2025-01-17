@@ -1,8 +1,6 @@
 # GLOBAL VARIABLES
 import pygame
 
-# origin (0, 0) is top left corner
-
 class Var():
     def __init__(self):
         global var
@@ -38,8 +36,8 @@ class Var():
         self._steps = pygame.sprite.Group()
         self.step = None
 
-        # tools is a list of sprite groups for 4 tool sprite each
-        # tool_screen is the index into the tools list
+        # tools is a list of sprite groups with 4 tool sprites each
+        # tool_screen is an index into the tools list
         self._tools = []
         self.tool = None
         self.tool_screen = -1
@@ -47,10 +45,10 @@ class Var():
         self._final_tools = []
         self.final = False
 
-        # canvas tracks any addition/subtraction of materials
+        # canvas tracks any addition/subtraction of materials at a step
         # redo tracks the "undo" of any materials removed from canvas
-        # both have key: step num and value: (material, x, y, size/rotation, shape)
-        # material can be either a tool or a "remove" circle to erase
+        # both have key of step num : value of (material, x, y, size/rotation, shape)
+        # material can be either a tool or a string "remove" to erase
         self.canvas = {}
         self.redo = {}
         
@@ -73,4 +71,5 @@ class Var():
         self.transparent = (0, 0, 0, 0)
         self.transparent_grey = (165, 165, 165, 100)
 
+# create a global var
 var = Var()

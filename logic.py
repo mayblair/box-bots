@@ -106,9 +106,9 @@ def final_toolbar():
 def init_steps(image_list):
     print("displaying steps...\n")
     # Calculate space between steps from length of total steps
-    spacing = (var.width - 450) / len(image_list)
+    spacing = (var.width - 380) / len(image_list)
     # Set Location of steps to be centered above the workspace
-    location = (450, 100)
+    location = (420, 100)
     
     # Begin step display with first step highlighted
     for count, image in enumerate(image_list):
@@ -134,7 +134,7 @@ def init_operations(operations, names):
     global remove_label
     print("displaying operations...\n")
     # Begin operation list on bottom of workspace
-    location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 100)
+    location = ((((var.width + 350) / 2) - (len(operations) * 50)), var.height - 95)
     for count, image in enumerate(operations):
         this_op = Operation(image, (location[0] + 125*count, location[1]), names[count])
         if count == 0:
@@ -143,7 +143,7 @@ def init_operations(operations, names):
         else:
             this_op._state = "unselected"
         var._operations.add(this_op)
-    
+    # initialize textboxes for add and remove operations
     add_label = TextBox(var.screen, var.width - 660, var.height - 40, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     add_label.setText("Add")
@@ -184,9 +184,9 @@ def init_bar_buttons():
 
 """ Displays slider on the bottom left of screen with a textbox """
 def init_slider():
-    var.slider = Slider(var.screen, var.width - 1010, var.height - 130, 220, 17, \
+    var.slider = Slider(var.screen, var.width - 1030, var.height - 110, 220, 17, \
                     min=5, max=80, step=1, initial=12, handleColour = var.purple_dark)
-    box = TextBox(var.screen, var.width - 940, var.height - 90, 30, 30, fontSize=16)
+    box = TextBox(var.screen, var.width - 940, var.height - 80, 30, 30, fontSize=16)
     box.disable()
     var.text_box = box
 
@@ -194,7 +194,7 @@ def init_slider():
 """ Displays rotation button and label on the bottom left of screen """
 def init_rotate():
     var.rotate = Rotate('images/rotate.png')
-    var.rotate_label = TextBox(var.screen, var.width - 1010, var.height - 50, 55, 25, \
+    var.rotate_label = TextBox(var.screen, var.width - 868, var.height - 50, 55, 25, \
                                fontSize=15, borderThickness=0, colour=var.light_grey)
     var.rotate_label.setText("Rotate")
     var.rotate_label.disable()
@@ -203,7 +203,7 @@ def init_rotate():
 """ Displays reorder button and label on the bottom right of screen """
 def init_reorder():
     var.reorder = Reorder('images/reorder.png')
-    var.reorder_label = TextBox(var.screen, var.width - 355, var.height - 50, 55, 25, \
+    var.reorder_label = TextBox(var.screen, var.width - 352, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.reorder_label.setText("Reorder")
     var.reorder_label.disable()
@@ -212,7 +212,7 @@ def init_reorder():
 """ Displays fold button and label on the bottom left of screen """
 def init_fold():
     var.fold = Fold('images/fold.png')
-    var.fold_label = TextBox(var.screen, var.width - 870, var.height - 50, 55, 25, \
+    var.fold_label = TextBox(var.screen, var.width - 990, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.fold_label.setText("")
     var.fold_label.disable()
@@ -261,7 +261,7 @@ def check_op():
     toolbar = var._tools if not var.final else var._final_tools
     for index,tool in enumerate(toolbar[var.tool_screen]):
         # if "add" operation is selected, brighten all tools
-        if var.op.name == "add":
+        if var.op.name == "add" and var.op == "selected":
             # select first tool
             if not var.tool and index == 0:
                 tool._state = "selected"
@@ -269,7 +269,7 @@ def check_op():
             elif tool._state == "darkened":
                 tool._state = "unselected"
         # if "remove" operation is selected, darken all tools
-        elif var.op.name == "remove":
+        elif var.op.name == "remove" and var.op == "selected":
             # unselect previously selected tool
             if var.tool:
                 var.tool.num_shape = 0
@@ -347,11 +347,11 @@ def draw_screen():
     # Fill it in with light grey
     var.screen.fill(var.light_grey)
     # Draw toolbar rectangle
-    background = pygame.Rect(0, 0, 325, var.height)
+    background = pygame.Rect(0, 0, 305, var.height)
     pygame.draw.rect(var.screen, var.more_grey, background)
     # Draw lines to section canvas from steps and operations
-    pygame.draw.line(var.screen, var.more_grey, (365, 210), (var.width - 50, 210), 4)
-    pygame.draw.line(var.screen, var.more_grey, (365, var.height - 170), (var.width - 50, var.height - 170), 4)
+    pygame.draw.line(var.screen, var.more_grey, (335, 210), (var.width - 40, 210), 4)
+    pygame.draw.line(var.screen, var.more_grey, (335, var.height - 160), (var.width - 40, var.height - 160), 4)
     # Draw undo/redo and toolbar buttons
     draw_buttons()
 

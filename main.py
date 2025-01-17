@@ -13,7 +13,7 @@ from logic import init_operations, init_toolbar, init_steps, \
     init_fold, draw_fold
 
 
-# GAME LOGIC
+""" Process mouse events to implement game logic """
 def process_events(events):
     global var
     global slider
@@ -21,11 +21,9 @@ def process_events(events):
     for event in events: 
         if event.type == pygame.QUIT:
             running = False
-            return False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-                return False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # get mouse position and select normal  or final toolbar
             x, y = pygame.mouse.get_pos()
@@ -97,12 +95,11 @@ def process_events(events):
     draw_screen()
     draw_variables()
     draw_canvas(var.step.num)
-    return True
 
 
-# START FUNCTION
+""" Start the program by initializing the variables and beginning a
+    while loop which processes events """
 def start():
-    # global slider
     pygame.init()
     set_up_vars()
     init_undo_redo()
@@ -113,6 +110,7 @@ def start():
     init_fold()
     draw_screen()
     draw_variables()
+    var.step.text.hide()
     pygame.display.flip()
     
     while running:
@@ -129,7 +127,7 @@ def start():
             # draw reorder and slider
             draw_reorder()
             draw_slider()
-            # draw slider and shadow circle
+            # draw shadow circle to show erase area on mouse
             draw_shadow((x,y), var.screen)
         # if add is selected
         elif var.op.name == "add" and var.op._state == "selected":
@@ -150,19 +148,19 @@ def start():
     pygame.quit()
 
 
-# READ IN VARIABLES FROM LOCAL DIRECTORIES
+""" Read in variable images for tools and steps from local directory """
 def set_up_vars():
-    # Get the list of all files and directories
     path = "/Users/mcblair/thesis/box-bots/images/"
-    # make sure is png or jpg
+    # make sure file is png or jpg
     step_list = os.listdir(path + var.project + '/steps/')
     steps = sorted(['images/' + var.project + '/steps/' + s for s in step_list \
                     if "png" in s])
     init_steps(steps)
 
-    # bottlecap, cardboard, rubber, skewer, straw, glue
+    # tools: bottlecap, cardboard, rubber, skewer, straw, glue
     sizes = [160, 350, 185, 370, 380, 85]
     tool_list = os.listdir(path + var.project + '/tools/')
+    # filter out alternate or reverse images
     tools = sorted(['images/' + var.project + '/tools/' + t for t in tool_list \
                     if ("alt" not in t and "rev" not in t) and \
                         ("png" in t or "jpg" in t)])
@@ -187,6 +185,6 @@ if __name__ == '__main__':
         print('\nstarting interface...\n')
         start()
     else:
-        print("\nEnter a project name (i.e., 'car')\n")
+        print("\nEnter a project name (i.e., 'tutorial')\n")
         running = False
         pygame.quit()
