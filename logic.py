@@ -73,13 +73,20 @@ def final_toolbar():
             break
         transparent = pygame.Surface(var.dimensions, pygame.SRCALPHA)
         transparent.fill(var.transparent)
+        # draw elements from the canvas at a step
         screen = draw_canvas(step.num, transparent)
+        # make the light grey "remove" circles transparent
+        screen.set_colorkey(var.light_grey)
+        screen.convert_alpha()
+        # place elements onto transparent background
         transparent.blit(screen, (0,0))
+        # crop, rotate, and scale the resulting image
         dimensions = (var.width-590, var.height)
         rect = pygame.Rect(400, 0, dimensions[0], dimensions[1])
-        sub = screen.subsurface(rect).convert_alpha()
+        sub = transparent.subsurface(rect).convert_alpha()
         r_image = pygame.transform.rotate(sub, 10)
-        _image = pygame.transform.smoothscale(r_image, (dimensions[0], dimensions[1] * 0.7)).convert_alpha()       
+        _image = pygame.transform.smoothscale(r_image, (dimensions[0], dimensions[1] * 0.7))
+        # save the image to a file and add to final toolbar
         img_name = 'images/' + var.project + '/tools/steps/step' + str(step.num) + '.png'
         pygame.image.save(_image, img_name)
         my_tool = Tool(img_name, (location[0], location[1] + 200*(index%4)), 1000, 1000)

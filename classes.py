@@ -447,5 +447,5 @@ class Fold(pygame.sprite.Sprite):
     def draw(self, screen = var.screen):
         pygame.draw.circle(var.screen, var.more_grey, \
                            (var.width - 970, var.height - 100), self._size)
-        self.rect.center = var.width - 970, var.height - 100
+        self.rect.center = var.width - 970, var.height - 98
         screen.blit(self.image, self.rect)
