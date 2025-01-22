@@ -293,18 +293,13 @@ def draw_shadow_tool(p, tool, screen = var.screen):
     image = tool.rev_img_load if tool.rotation == 4 and tool.rev_img_load else image
     transparent = pygame.Surface(var.dimensions, pygame.SRCALPHA)
     transparent.fill(var.transparent)
-    _image = pygame.transform.smoothscale(image, \
-        (tool.toolsizex, tool.toolsizey))
+    _image = pygame.transform.smoothscale(image, (tool.toolsizex, tool.toolsizey))
     r_image = pygame.transform.rotate(_image, tool.rotation * 45)
     # Re-position the image
     rect = r_image.get_rect()
     rect.center = p[0], p[1]
     transparent.blit(r_image, rect)
     transparent.set_alpha(100)
-    # crop image
-    # portion_dim = (var.width-590, var.height)
-    # portion = pygame.Rect(400, 0, portion_dim[0], portion_dim[1])
-    # sub = transparent.subsurface(portion).convert_alpha()
     screen.blit(transparent, (0,0))
 
 
@@ -409,9 +404,8 @@ def add_tool(position, tool, rotation, shape, screen=var.screen):
     print("adding tool...\n")
     image = tool.shapes[shape]
     image = tool.rev_img_load if rotation == 4 and tool.rev_img_load else image
-    _image = pygame.transform.smoothscale(image, \
-            (tool.toolsizex, tool.toolsizey))
-    r_image = pygame.transform.rotate(_image, rotation * 45)
+    image = pygame.transform.smoothscale(image, (tool.toolsizex, tool.toolsizey))
+    r_image = pygame.transform.rotate(image, rotation * 45)
     # Re-position the image
     rect = r_image.get_rect()
     rect.center = position[0], position[1]

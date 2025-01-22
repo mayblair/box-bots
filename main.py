@@ -158,7 +158,7 @@ def set_up_vars():
     init_steps(steps)
 
     # tools: bottlecap, cardboard, rubber, skewer, straw, glue
-    sizes = [160, 350, 185, 370, 380, 85]
+    sizes = [160, 350, 175, 370, 380, 85]
     tool_list = os.listdir(path + var.project + '/tools/')
     # filter out alternate or reverse images
     tools = sorted(['images/' + var.project + '/tools/' + t for t in tool_list \

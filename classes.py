@@ -99,7 +99,7 @@ class Tool(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
     
-        self._size = 100
+        self._size = 100 if not var.final else 150
         self.toolsizex = toolsizex
         self.toolsizey = toolsizey
         self._x = point[0]
@@ -129,8 +129,8 @@ class Tool(pygame.sprite.Sprite):
             self.rev_img_load = pygame.image.load(rev_img).convert_alpha()
 
         if var.final:
-            self.toolsizey = toolsizey * 0.7
-            self.toolsizex = toolsizex * 0.9
+            self.toolsizey = toolsizey * 0.75
+            self.toolsizex = toolsizex * 0.95
             
         self.image = pygame.transform.smoothscale(self.image_load, \
                 (self._size, self._size)).convert_alpha()
@@ -165,14 +165,14 @@ class Tool(pygame.sprite.Sprite):
         # small and shadowed.
         if self._state == "unselected":
             # Draw a light grey background circle with dark grey border
-            pygame.draw.circle(screen, var.yellow_grey, (self._x, self._y), self._size-15)
+            pygame.draw.circle(screen, var.yellow_grey, (self._x, self._y), 85)
         elif self._state == "selected":
             # Draw a white background circle
-            pygame.draw.circle(screen, var.yellow_dark, (self._x, self._y), self._size-10)
-            pygame.draw.circle(screen, var.yellow_light, (self._x, self._y), self._size-15)
+            pygame.draw.circle(screen, var.yellow_dark, (self._x, self._y), 90)
+            pygame.draw.circle(screen, var.yellow_light, (self._x, self._y), 85)
         elif self._state == "darkened":
             # Draw a darkened circle
-            pygame.draw.circle(screen, var.mostly_grey, (self._x, self._y), self._size-15)
+            pygame.draw.circle(screen, var.mostly_grey, (self._x, self._y), 85)
         else:
             print("no tool state assigned yet")
             pygame.quit()
