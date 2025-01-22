@@ -268,7 +268,7 @@ def check_op():
     toolbar = var._tools if not var.final else var._final_tools
     for index,tool in enumerate(toolbar[var.tool_screen]):
         # if "add" operation is selected, brighten all tools
-        if var.op.name == "add" and var.op == "selected":
+        if var.op.name == "add" and var.op._state == "selected":
             # select first tool
             if not var.tool and index == 0:
                 tool._state = "selected"
@@ -276,7 +276,7 @@ def check_op():
             elif tool._state == "darkened":
                 tool._state = "unselected"
         # if "remove" operation is selected, darken all tools
-        elif var.op.name == "remove" and var.op == "selected":
+        elif var.op.name == "remove" and var.op._state == "selected":    
             # unselect previously selected tool
             if var.tool:
                 var.tool.num_shape = 0

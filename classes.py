@@ -214,9 +214,7 @@ class Operation(pygame.sprite.Sprite):
     def on_click(self):
         if var.op:
             var.op._state = "unselected"
-            var.op.draw()
         self._state = "selected"
-        self.draw()
         var.op = self
             
 
