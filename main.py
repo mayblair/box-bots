@@ -13,7 +13,7 @@ from logic import init_operations, init_toolbar, init_steps, \
     init_fold, draw_fold
 
 
-""" Process mouse events to implement game logic """
+""" Process mouse events to implement interface logic """
 def process_events(events):
     global var
     global slider
@@ -25,23 +25,21 @@ def process_events(events):
             if event.key == pygame.K_ESCAPE:
                 running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            # get mouse position and select normal  or final toolbar
+            # get mouse position and select normal or final toolbar
             x, y = pygame.mouse.get_pos()
             toolbar = var._tools if not var.final else var._final_tools
             # CLICK ON CANVAS
             if (var.width-100 > x > 350 and 630 > y > 230):
-                # store tool info in dictionary under selected step
+                # store tool info in canvas dictionary under selected step
                 if var.op.name == "add" and var.tool:
                     var.canvas[var.step.num] += [(var.tool, x, y, var.tool.rotation, var.tool.num_shape)]
                     draw_new_tool()
-                    return True
                 # store removed circle in dictionary under selected step
                 elif var.op.name == "remove":
                     # only remove material if there is material on canvas
                     if var.canvas[var.step.num]:
                         var.canvas[var.step.num] += [("remove", x, y, var.slider.getValue())]
                         remove_new_circle()
-                        return True
             # CLICK ON OPERATIONS
             elif (var.width - 20 > x > 350 and var.height > y > 690):
                 # update all the operations, tools, and operative buttons
@@ -73,6 +71,7 @@ def process_events(events):
             elif (var.width > x > 305 and y < 230):
                 old_step = var.step
                 for step in var._steps:
+                    # search for updated step
                     updated = step.update(events)
                     if updated:
                         # if the final step is chosen, change to step-based toolbar
@@ -85,6 +84,7 @@ def process_events(events):
                             reset_tool()
                             # check operations to properly draw tools
                             check_op()
+                        # if any other step is chosen, ensure final toolbar is not selected
                         else:
                             var.final = False
                         old_step.text.show()
@@ -92,6 +92,7 @@ def process_events(events):
                         break
             else:
                 print("unknown update at " + str(x) + " " + str(y))
+    # redraw screen
     draw_screen()
     draw_variables()
     draw_canvas(var.step.num)
@@ -100,6 +101,7 @@ def process_events(events):
 """ Start the program by initializing the variables and beginning a
     while loop which processes events """
 def start():
+    # initialize the game and all the relevant sprites
     pygame.init()
     set_up_vars()
     init_undo_redo()
@@ -108,18 +110,21 @@ def start():
     init_rotate()
     init_reorder()
     init_fold()
+    # draw the screen and variables
     draw_screen()
     draw_variables()
+    # hide the first step's label
     var.step.text.hide()
     pygame.display.flip()
     
     while running:
+        # tick clock, get mouse position, and process events
         var.time = clock.tick(60)
         x, y = pygame.mouse.get_pos()
         events = pygame.event.get()
         pygame_widgets.update(events)
         process_events(events)
-        # if remove is selected and slider is initiated
+        # if remove operation is selected
         if var.op.name == "remove" and var.slider:
             # hide text labels of rotate and fold
             var.rotate_label.hide()
@@ -129,7 +134,7 @@ def start():
             draw_slider()
             # draw shadow circle to show erase area on mouse
             draw_shadow((x,y), var.screen)
-        # if add is selected
+        # if add operation is selected
         elif var.op.name == "add" and var.op._state == "selected":
             # hide slider, slider text, and fold
             var.slider.hide()
@@ -138,11 +143,11 @@ def start():
             # draw reorder and rotate
             draw_rotate()
             draw_reorder()
-            # show a shadow of image on mouse
             if var.tool:
                 # draw fold if foldable tool is selected
                 if var.tool.foldable:
                     draw_fold()
+                # show a shadow of image on mouse
                 draw_shadow_tool((x,y), var.tool, var.screen)
         pygame.display.flip()
     pygame.quit()
@@ -150,14 +155,17 @@ def start():
 
 """ Read in variable images for tools and steps from local directory """
 def set_up_vars():
+    # find local directory
     path = "/Users/mcblair/thesis/box-bots/images/"
     # make sure file is png or jpg
+    # initialize steps
     step_list = os.listdir(path + var.project + '/steps/')
     steps = sorted(['images/' + var.project + '/steps/' + s for s in step_list \
                     if "png" in s])
     init_steps(steps)
-
-    # tools: bottlecap, cardboard, rubber, skewer, straw, glue
+    
+    # initialize tools
+    # tools order: bottlecap, cardboard, rubber, skewer, straw, glue
     sizes = [160, 350, 175, 370, 380, 85]
     tool_list = os.listdir(path + var.project + '/tools/')
     # filter out alternate or reverse images
@@ -166,6 +174,7 @@ def set_up_vars():
                         ("png" in t or "jpg" in t)])
     init_toolbar(tools, sizes)
 
+    # initialize operations
     op_list = os.listdir(path + 'operations/')
     op_names = ['add', 'remove']
     ops = ['images/operations/' + o for o in op_list if "png" in o]
@@ -174,16 +183,18 @@ def set_up_vars():
     
 """ Start main function """
 if __name__ == '__main__':
-    # MAIN PROGRAM VARIABLES
+    # read in project name
     project_name = sys.argv[1:]
     if project_name:
         var.project = project_name[0]
+        # set starting variables
         running = True
         slider = False
-        # START GAME
+        # start clock and interface
         clock = pygame.time.Clock()
         print('\nstarting interface...\n')
         start()
+    # ask for a project name if none is provided
     else:
         print("\nEnter a project name (i.e., 'tutorial')\n")
         running = False

@@ -2,6 +2,8 @@
 import pygame
 
 class Var():
+
+    """ Initialize a global variable to store program-wide information"""
     def __init__(self):
         global var
         # SCREEN INFORMATION SETUP
