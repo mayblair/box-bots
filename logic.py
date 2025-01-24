@@ -254,7 +254,6 @@ def toggle_bar_buttons():
 def reset_tool():
     global var
     if var.tool:
-        print("reset")
         var.tool._state = "unselected"
         var.tool.num_shape = 0
         var.tool.rotation = 0
