@@ -113,9 +113,9 @@ def final_toolbar():
 def init_steps(image_list):
     print("displaying steps...\n")
     # Calculate space between steps from length of total steps
-    spacing = (var.width - 380) / len(image_list)
+    spacing = (var.width - 375) / len(image_list)
     # Set Location of steps to be centered above the workspace
-    location = (420, 100)
+    location = (420, 115)
     
     # Begin step display with first step highlighted
     for count, image in enumerate(image_list):
@@ -346,13 +346,13 @@ def draw_fold():
 
 """ Draw screen, including background, and undo/redo & toolbar buttons """
 def draw_screen():
-    # Fill it in with light grey
+    # Fill screen in with light grey
     var.screen.fill(var.light_grey)
     # Draw toolbar rectangle
     background = pygame.Rect(0, 0, 305, var.height)
     pygame.draw.rect(var.screen, var.more_grey, background)
     # Draw lines to section canvas from steps and operations
-    pygame.draw.line(var.screen, var.more_grey, (335, 210), (var.width - 40, 210), 4)
+    pygame.draw.line(var.screen, var.more_grey, (335, 230), (var.width - 40, 230), 4)
     pygame.draw.line(var.screen, var.more_grey, (335, var.height - 160), (var.width - 40, var.height - 160), 4)
     # Draw undo/redo and toolbar buttons
     draw_buttons()

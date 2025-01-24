@@ -57,8 +57,8 @@ class Step(pygame.sprite.Sprite):
             # Draw a dark grey background rectangle with a small image
             image_surf = pygame.transform.smoothscale(self.image, (70, 70))
             r_width, r_height = image_surf.get_size()
-            background = pygame.Rect(self._x - r_width//2 - 15, self._y - r_height//2 - 15, \
-                r_width + 30, r_height + 30)
+            background = pygame.Rect(self._x - r_width//2 - 10, self._y - r_height//2 - 10, \
+                r_width + 20, r_height + 20)
             pygame.draw.rect(screen, back_color, background, 0, 5)
             # Label the step if it in not selected
             self.text.draw()
@@ -68,14 +68,14 @@ class Step(pygame.sprite.Sprite):
                 back_color = var.yellow_light
             else:
                 back_color = var.purple_light
-            image_surf = pygame.transform.smoothscale(self.image, (150, 150))
+            image_surf = pygame.transform.smoothscale(self.image, (170, 170))
             r_width, r_height = image_surf.get_size()
             # Create large light background offset from image
-            light_background = pygame.Rect(self._x - r_width//2 - 15, \
-                self._y - r_height//2 - 15, r_width + 30, r_height + 30)
+            light_background = pygame.Rect(self._x - r_width//2 - 10, \
+                self._y - r_height//2 - 10, r_width + 20, r_height + 20)
             # Create border around the background
-            border = pygame.Rect(self._x - r_width//2 - 20, \
-                self._y - r_height//2 - 20, r_width + 40, r_height + 40)
+            border = pygame.Rect(self._x - r_width//2 - 15, \
+                self._y - r_height//2 - 15, r_width + 30, r_height + 30)
             pygame.draw.rect(screen, var.purple_dark, border, 0, 5)
             pygame.draw.rect(screen, back_color, light_background, 0, 5)
         else:
