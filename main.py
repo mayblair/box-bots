@@ -161,11 +161,11 @@ def set_up_vars():
     # initialize steps
     step_list = os.listdir(path + var.project + '/steps/')
     steps = sorted(['images/' + var.project + '/steps/' + s for s in step_list \
-                    if "png" in s])
+                    if ("png" in s or "jpg" in s)])
     init_steps(steps)
     
     # initialize tools
-    # tools order: bottlecap, cardboard, rubber, skewer, straw, glue
+    # tools order is alphabetal by file name
     sizes = [160, 350, 175, 370, 380, 85]
     tool_list = os.listdir(path + var.project + '/tools/')
     # filter out alternate or reverse images
@@ -175,9 +175,10 @@ def set_up_vars():
     init_toolbar(tools, sizes)
 
     # initialize operations
-    op_list = os.listdir(path + 'operations/')
+    op_list = os.listdir(path + 'op_icons/add_erase/')
     op_names = ['add', 'remove']
-    ops = ['images/operations/' + o for o in op_list if "png" in o]
+    ops = ['images/op_icons/add_erase/' + o for o in op_list\
+           if ("png" in o or "jpg" in o)]
     init_operations(ops, op_names)
     
     

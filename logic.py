@@ -67,27 +67,28 @@ def final_toolbar():
     var.tool_screen = 0
     var._final_tools = []
     reset_tool()
-    # create final toolbar with contents of every canvas except the last one
+    # create final toolbar with contents of every canvas except the final step
     for index, step in enumerate(var._steps):
         if index == len(var._steps) - 1:
             break
+        # create transparent surface
         transparent = pygame.Surface(var.dimensions, pygame.SRCALPHA)
         transparent.fill(var.transparent)
-        # draw elements from the canvas at a step
+        # draw elements from a step's canvas onto the transparent surface
         screen = draw_canvas(step.num, transparent)
-        # make the light grey "remove" circles transparent
+        # re-color the light grey "remove" circles to be transparent
         screen.set_colorkey(var.light_grey)
-        screen.convert_alpha()
-        # place elements onto transparent background
+        # draw elements from screen onto the transparent surface
         transparent.blit(screen, (0,0))
-        # crop, rotate, and scale the resulting image
+        # crop the resulting image
         dimensions = (var.width-590, var.height)
         rect = pygame.Rect(400, 0, dimensions[0], dimensions[1])
         sub = transparent.subsurface(rect).convert_alpha()
+        # rotate and scale the resulting image
         r_image = pygame.transform.rotate(sub, 10)
         _image = pygame.transform.smoothscale(r_image, (dimensions[0], dimensions[1] * 0.7))
         # save the image to a file and add to final toolbar
-        img_name = 'images/' + var.project + '/tools/steps/step' + str(step.num) + '.png'
+        img_name = 'images/' + var.project + '/tools/final_steps/step' + str(step.num) + '.png'
         pygame.image.save(_image, img_name)
         my_tool = Tool(img_name, (location[0], location[1] + 200*(index%4)), 1000, 1000)
         if index == 0:
@@ -166,8 +167,8 @@ def init_undo_redo():
     global undo_label
     global redo_label
     print("displaying undo/redo...\n")
-    redo = UndoRedo('images/redo.png', "redo")
-    undo = UndoRedo('images/undo.png', "undo")
+    redo = UndoRedo('images/op_icons/redo.png', "redo")
+    undo = UndoRedo('images/op_icons/undo.png', "undo")
     var._undo_redo.add(redo)
     var._undo_redo.add(undo)
     undo_label = TextBox(var.screen, var.width-185, var.height-40, 55, 25, \
@@ -183,8 +184,8 @@ def init_undo_redo():
 """ Displays up and down arrow buttons on the top and bottom of the toolbar """
 def init_bar_buttons():
     print("displaying bar buttons...\n")
-    up = BarButton('images/up-arrow.png', "up")
-    down = BarButton('images/down-arrow.png', "down")
+    up = BarButton('images/op_icons/up-arrow.png', "up")
+    down = BarButton('images/op_icons/down-arrow.png', "down")
     var._bar_buttons.add(up)
     var._bar_buttons.add(down)
 
@@ -200,7 +201,7 @@ def init_slider():
 
 """ Displays rotation button and label on the bottom left of screen """
 def init_rotate():
-    var.rotate = Rotate('images/rotate.png')
+    var.rotate = Rotate('images/op_icons/rotate.png')
     var.rotate_label = TextBox(var.screen, var.width - 868, var.height - 50, 55, 25, \
                                fontSize=15, borderThickness=0, colour=var.light_grey)
     var.rotate_label.setText("Rotate")
@@ -209,7 +210,7 @@ def init_rotate():
 
 """ Displays reorder button and label on the bottom right of screen """
 def init_reorder():
-    var.reorder = Reorder('images/reorder.png')
+    var.reorder = Reorder('images/op_icons/reorder.png')
     var.reorder_label = TextBox(var.screen, var.width - 352, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.reorder_label.setText("Reorder")
@@ -218,7 +219,7 @@ def init_reorder():
 
 """ Displays fold button and label on the bottom left of screen """
 def init_fold():
-    var.fold = Fold('images/fold.png')
+    var.fold = Fold('images/op_icons/fold.png')
     var.fold_label = TextBox(var.screen, var.width - 990, var.height - 50, 55, 25, \
                                 fontSize=15, borderThickness=0, colour=var.light_grey)
     var.fold_label.setText("")
