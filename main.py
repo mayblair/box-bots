@@ -56,9 +56,6 @@ def process_events(events):
                     init_slider()
             # CLICK ON TOOLBAR
             elif (350 > x > 0):
-                # update tools and tool bar buttons
-                var._bar_buttons.update(events)
-                toolbar[var.tool_screen].update(events)
                 # if remove is selected, change to add operation
                 if var.op.name == "remove" and var.op._state == "selected":
                     # find add operation sprite and select it
@@ -66,7 +63,9 @@ def process_events(events):
                     add_op._state = "selected"
                     var.op._state = "unselected"
                     var.op = add_op
-                    check_op()
+                # update tools and tool bar buttons
+                var._bar_buttons.update(events)
+                toolbar[var.tool_screen].update(events)
             # CLICK ON STEPS
             elif (var.width > x > 305 and y < 230):
                 old_step = var.step

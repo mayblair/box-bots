@@ -273,7 +273,7 @@ def check_op():
             if not var.tool and index == 0:
                 tool._state = "selected"
                 var.tool = tool
-            elif tool._state == "darkened":
+            else:
                 tool._state = "unselected"
         # if "remove" operation is selected, darken all tools
         elif var.op.name == "remove" and var.op._state == "selected":    
@@ -282,7 +282,7 @@ def check_op():
                 var.tool.num_shape = 0
                 var.tool.rotation = 0
                 var.tool = None
-            tool._state = "darkened"
+            tool._state = "unselected"
         tool.draw()
 
 
